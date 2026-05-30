@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>EV Map Tourism Chiang Rai</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Mitr', 'sans-serif'],
+          },
+          colors: {
+            primary: '#7A2882',
+            'primary-light': '#9d42a6',
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <link rel="stylesheet" href="./assets/css/style.css">
+
+  <style>
+    /* สไตล์เพิ่มเติมเพื่อให้แผนที่แสดงผลลัพธ์แบบ Glassmorphic สวยงาม */
+    .map-container-wrapper {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 2rem;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+      position: relative;
+    }
+
+    .dark .map-container-wrapper {
+      background: rgba(15, 23, 42, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #map {
+      border-radius: 1.5rem;
+      z-index: 10;
+    }
+
+    .glass-pill.active {
+      box-shadow: 0 0 0 3px rgba(122, 40, 130, 0.35),
+        0 18px 38px rgba(122, 40, 130, 0.22);
+      transform: scale(1.03);
+      border-color: rgba(122, 40, 130, 0.7);
+      color: #7A2882;
+    }
+
+    #mapPointerOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 52;
+    }
+
+    #mapPointerOverlay.hidden {
+      display: none;
+    }
+
+    .map-pointer-line {
+      position: absolute;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(122, 40, 130, 0.95), rgba(29, 110, 219, 0.95));
+      box-shadow: 0 0 18px rgba(122, 40, 130, 0.4);
+      transform-origin: left center;
+    }
+
+    .map-pointer-tip {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+      border-left: 16px solid #7A2882;
+      filter: drop-shadow(0 0 8px rgba(122, 40, 130, 0.6));
+    }
+
+    .map-pointer-pulse {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(122, 40, 130, 0.75);
+      background: rgba(255, 255, 255, 0.12);
+      transform: translate(-50%, -50%);
+      animation: pulse-dot 1.6s ease-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0% {
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(1.8);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 pb-24 md:pb-0 relative min-h-screen overflow-x-hidden">
+
+  <div class="fluid-bg-container">
+    <div class="fluid-blob blob-pink"></div>
+    <div class="fluid-blob blob-yellow"></div>
+    <div class="fluid-blob blob-blue"></div>
+    <div class="fluid-blob blob-green"></div>
+  </div>
+
+  <nav class="glass fixed top-0 w-full z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <div class="flex-shrink-0 flex items-center space-x-3">
+          <img src="pic/culture.jpg" alt="Culture" class="nav-brand-logo drop-shadow-md bg-white rounded-full p-1"
+            title="วัฒนธรรมจังหวัดเชียงราย">
+          <img src="pic/swk.PNG" alt="School" class="nav-brand-logo drop-shadow-md bg-white rounded-full p-1"
+            title="โรงเรียนสามัคคีวิทยาคม">
+          <img src="pic/sc.PNG" alt="Council" class="nav-brand-logo drop-shadow-md bg-white rounded-full p-1"
+            title="คณะกรรมการสภานักเรียน">
+        </div>
+
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="./index.html" class="nav-link active text-gray-800 dark:text-gray-200 font-semibold"
+            data-i18n="nav_home">หน้าหลัก</a>
+          <a href="./map.html" class="nav-link text-gray-800 dark:text-gray-200 font-semibold"
+            data-i18n="nav_map">แผนที่</a>
+          <a href="./schedule.html" class="nav-link text-gray-800 dark:text-gray-200 font-semibold"
+            data-i18n="nav_schedule">ตารางรถ</a>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <button
+            class="dark-mode-toggle w-10 h-10 rounded-full glass flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+            <i class="fas fa-moon"></i>
+          </button>
+          <div class="flex bg-gray-200 dark:bg-gray-800 rounded-full p-1 shadow-inner">
+            <button
+              class="lang-btn px-3 py-1 rounded-full text-sm font-medium transition text-gray-700 dark:text-gray-300"
+              data-lang="th">TH</button>
+            <button
+              class="lang-btn px-3 py-1 rounded-full text-sm font-medium transition text-gray-700 dark:text-gray-300"
+              data-lang="en">EN</button>
+            <button
+              class="lang-btn px-3 py-1 rounded-full text-sm font-medium transition text-gray-700 dark:text-gray-300"
+              data-lang="cn">CN</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <nav
+    class="md:hidden fixed bottom-0 w-full glass rounded-t-3xl z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+    <div class="flex justify-around items-center h-16">
+      <a href="./index.html"
+        class="mobile-nav-link flex flex-col items-center justify-center w-full h-full text-gray-500 transition relative">
+        <i class="fas fa-home text-xl mb-1"></i>
+        <span class="text-[10px] font-medium" data-i18n="nav_home">หน้าหลัก</span>
+      </a>
+      <a href="./map.html"
+        class="mobile-nav-link flex flex-col items-center justify-center w-full h-full text-gray-500 transition relative">
+        <i class="fas fa-map-marked-alt text-xl mb-1"></i>
+        <span class="text-[10px] font-medium" data-i18n="nav_map">แผนที่</span>
+      </a>
+      <a href="./schedule.html"
+        class="mobile-nav-link flex flex-col items-center justify-center w-full h-full text-gray-500 transition relative">
+        <i class="fas fa-bus text-xl mb-1"></i>
+        <span class="text-[10px] font-medium" data-i18n="nav_schedule">ตารางรถ</span>
+      </a>
+    </div>
+  </nav>
+
+  <main class="pt-24 min-h-screen flex items-center justify-center px-4 relative z-10">
+    <div class="max-w-7xl w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-6 py-8">
+
+      <div id="desktopStopsLeft" class="hidden md:flex flex-col gap-3 w-1/4"></div>
+
+      <div class="w-full md:w-2/4 flex flex-col items-center justify-center relative">
+        <div class="map-container-wrapper w-full p-3 aspect-square max-w-[450px] md:max-w-[500px]">
+          <div id="map" class="w-full h-full shadow-inner min-h-[350px]"></div>
+        </div>
+        <div id="mapPointerOverlay" class="map-pointer-overlay hidden">
+          <div class="map-pointer-line"></div>
+          <div class="map-pointer-tip"></div>
+          <div class="map-pointer-pulse"></div>
+        </div>
+
+        <div class="w-full max-w-[260px] mt-4 md:mt-6">
+          <a href="./map.html" class="start-btn block py-3.5 text-center text-lg transition-all">
+            <span class="font-extrabold mr-2 tracking-wide">START</span>
+            <span data-i18n="start_journey" class="font-bold text-base">เริ่มการเดินทาง</span>
+          </a>
+        </div>
+      </div>
+
+      <div id="desktopStopsRight" class="hidden md:flex flex-col gap-3 w-1/4"></div>
+
+      <div class="flex md:hidden flex-col w-full gap-4 px-2 mt-4">
+        <div class="flex items-center gap-3 justify-center mb-2">
+          <div class="w-6 h-1 bg-primary rounded-full"></div>
+          <h3 class="text-lg font-bold dark:text-white" data-i18n="route_stops">สถานีหยุดรถ</h3>
+          <div class="w-6 h-1 bg-primary rounded-full"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3" id="mobileStopsGrid">
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="spotModal" class="glass-modal-overlay">
+    <div class="glass-modal-container  relative flex flex-col md:flex-row overflow-hidden max-h-[85vh]">
+      <button class="modal-close-btn" id="modalCloseBtn">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="w-full md:w-1/2 h-52 md:h-auto relative shrink-0 modal-image-section">
+        <img id="modalImage" src="" class="w-full h-full object-cover" alt="Spot Image">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none md:hidden"></div>
+
+        <div id="modalMascotGuide" class="modal-mascot-guide" aria-hidden="true">
+          <div id="mascotSpeechBubble" class="mascot-speech-bubble">
+            <span id="mascotSpeechText">🔊 กำลังบรรยาย...</span>
+          </div>
+          <img src="./pic/mascot-guide.png" alt="" class="modal-mascot-img" draggable="false">
+        </div>
+      </div>
+
+      <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-between overflow-y-auto min-h-[300px] md:min-h-0">
+        <div>
+          <span class="text-xs uppercase tracking-wider font-extrabold text-primary dark:text-primary-light mb-1 block"
+            data-i18n="spot_details">รายละเอียดสถานที่</span>
+          <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
+            <h2 id="modalTitle"
+              class="text-xl md:text-3xl font-extrabold text-gray-900 dark:text-white pr-6 md:pr-0 leading-tight"></h2>
+            <button id="modalSpeechBtn"
+              class="flex items-center gap-1.5 bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light px-3 py-1.5 rounded-full text-xs font-bold hover:bg-primary/20 hover:scale-[1.03] transition-all shrink-0">
+              <i class="fas fa-volume-up"></i>
+              <span data-i18n="listen_guide">ฟังเสียงบรรยาย</span>
+            </button>
+          </div>
+
+          <div class="mb-4">
+            <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 mb-1" data-i18n="history">ประวัติความเป็นมา
+            </h4>
+            <p id="modalHistory" class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed"></p>
+          </div>
+
+          <div class="mb-4">
+            <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 mb-1" data-i18n="recommended_places">
+              สถานที่แนะนำ</h4>
+            <p id="modalDescription" class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed"></p>
+          </div>
+
+          <div class="mb-4">
+            <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 mb-1" data-i18n="nearby">สถานที่ใกล้เคียง</h4>
+            <p id="modalNearby" class="text-sm text-gray-600 dark:text-gray-400"></p>
+          </div>
+
+          <div class="mb-6">
+            <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 mb-2" data-i18n="ev_schedule_today">
+              ตารางเวลารถ EV วิ่งวันนี้</h4>
+            <div id="modalTimings" class="flex flex-wrap gap-1"></div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-gray-200/20">
+          <a id="modalMapBtn" href="#"
+            class="w-full btn-primary py-3 text-center text-sm font-extrabold rounded-xl shadow-md transition hover:scale-[1.03] flex items-center justify-center gap-2">
+            <i class="fas fa-location-dot"></i> <span data-i18n="open_in_map">เปิดในแผนที่</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="glass mt-0 py-6 px-4 text-center border-t border-gray-200/20 relative z-10 w-full">
+    <div class="max-w-7xl mx-auto text-xs text-gray-500 dark:text-gray-400 font-medium">
+      <p>&copy; 2026 SWK Student Council</p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script src="./assets/js/app.js"></script>
+  <script>
+    /** ปุ่มหน้าหลักตามดีไซน์: ซ้าย 5 | ขวา 4 */
+    const HOME_STOPS_LEFT = [1, 4, 5, 6, 9];
+    const HOME_STOPS_RIGHT = [10, 12, 14, 16];
+    const HOME_FEATURED_IDS = [...HOME_STOPS_LEFT, ...HOME_STOPS_RIGHT];
+
+    function getSpotLatLng(spot) {
+      const lat = spot.latitude ?? spot.lat;
+      const lng = spot.longitude ?? spot.lng;
+      return { lat, lng };
+    }
+
+    function createHomeStopPill(spot, forMobile = false) {
+      const pill = document.createElement('div');
+      pill.className = forMobile
+        ? 'glass-pill cursor-pointer text-xs p-3 text-center font-bold'
+        : 'glass-pill cursor-pointer min-h-[2.8rem] py-2 px-4 text-xs md:text-sm';
+      pill.setAttribute('data-id', spot.id);
+      const name = spot[`name_${currentLang}`] || spot.name_th;
+      pill.innerHTML = `<span class="spot-name-label mobile-spot-name-${spot.id} text-center leading-tight">${name}</span>`;
+      return pill;
+    }
+
+    function renderHomeStopButtons(spots) {
+      const leftCol = document.getElementById('desktopStopsLeft');
+      const rightCol = document.getElementById('desktopStopsRight');
+      const mobileGrid = document.getElementById('mobileStopsGrid');
+      if (!leftCol || !rightCol || !mobileGrid) return;
+
+      leftCol.innerHTML = '';
+      rightCol.innerHTML = '';
+      mobileGrid.innerHTML = '';
+
+      HOME_STOPS_LEFT.forEach((id) => {
+        const spot = spots.find((s) => s.id === id);
+        if (spot) leftCol.appendChild(createHomeStopPill(spot));
+      });
+
+      HOME_STOPS_RIGHT.forEach((id) => {
+        const spot = spots.find((s) => s.id === id);
+        if (spot) rightCol.appendChild(createHomeStopPill(spot));
+      });
+
+      HOME_FEATURED_IDS.forEach((id) => {
+        const spot = spots.find((s) => s.id === id);
+        if (spot) mobileGrid.appendChild(createHomeStopPill(spot, true));
+      });
+    }
+
+    function updateHomeStopLabels(spots) {
+      HOME_FEATURED_IDS.forEach((id) => {
+        const spot = spots.find((s) => s.id === id);
+        if (!spot) return;
+        const name = spot[`name_${currentLang}`] || spot.name_th;
+        document.querySelectorAll(`[data-id="${id}"] .spot-name-label`).forEach((el) => {
+          el.textContent = name;
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const spots = await loadTouristSpots();
+      const featuredSpots = spots.filter((s) => HOME_FEATURED_IDS.includes(s.id));
+      renderHomeStopButtons(spots);
+      // ตัวแปรเก็บ Object ของหมุดบนแผนที่ เพื่อเรียกใช้ตอนกดปุ่ม
+      const mapMarkers = {};
+      let activeTargetCircle = null;
+
+      // 2. ตั้งค่าและสร้างแผนที่จริง (Leaflet Map) โดยเซ็ตศูนย์กลางไปที่ตัวเมืองเชียงราย
+      const map = L.map('map', {
+        zoomControl: false // ซ่อนปุ่มซูมมาตรฐานเพื่อความคลีน
+      }).setView([19.9070, 99.8310], 14);
+
+      // เพิ่ม Base Layer แผนที่ (โทนสว่าง/ใช้งานง่ายจาก OpenStreetMap Carto)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // สร้าง Custom Icon สำหรับรถ EV
+      const customIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: `<div style="background-color: #7A2882; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.4); flex items-center justify-center"><i class="fas fa-location-dot" style="color: white; font-size: 10px; display: block; text-align: center; line-height: 18px;"></i></div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+        popupAnchor: [0, -12]
+      });
+
+      featuredSpots.forEach((spot) => {
+        const { lat, lng } = getSpotLatLng(spot);
+        if (lat == null || lng == null) return;
+
+        const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
+        marker.bindPopup(`<b style="color:#7A2882;">${spot[`name_${currentLang}`] || spot.name_th}</b><br><span style="font-size:11px;">คลิกเพื่อดูรายละเอียด</span>`);
+        marker.on('click', () => openDetailModal(spot));
+        mapMarkers[spot.id] = marker;
+      });
+
+      if (featuredSpots.length > 0) {
+        const bounds = L.latLngBounds(
+          featuredSpots.map((s) => {
+            const { lat, lng } = getSpotLatLng(s);
+            return [lat, lng];
+          })
+        );
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+      }
+
+      let currentUtterance = null;
+      let isSpeaking = false;
+
+      function stopSpeech() {
+        if (window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+        isSpeaking = false;
+        const mascotImg = document.querySelector('.modal-mascot-img');
+        const speechBubble = document.getElementById('mascotSpeechBubble');
+        const speechBtn = document.getElementById('modalSpeechBtn');
+        if (mascotImg) mascotImg.classList.remove('talking');
+        if (speechBubble) speechBubble.classList.remove('active');
+        if (speechBtn) {
+          speechBtn.innerHTML = `<i class="fas fa-volume-up"></i> <span data-i18n="listen_guide">${getTranslation('listen_guide')}</span>`;
+        }
+      }
+
+      function startSpeech(spot) {
+        if (!window.speechSynthesis) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Not Supported',
+            text: 'เบราว์เซอร์นี้ไม่รองรับระบบเสียงพูดบรรยาย'
+          });
+          return;
+        }
+
+        stopSpeech();
+
+        const name = spot[`name_${currentLang}`] || spot.name_th;
+        const historyText = spot[`history_${currentLang}`] || spot.history_th || spot.history || '';
+        const descText = spot[`description_${currentLang}`] || spot.description_th || spot.description || '';
+
+        let textToRead = '';
+        let langCode = 'th-TH';
+        let bubbleIntro = '';
+
+        if (currentLang === 'th') {
+          textToRead = `นี่คือ ${name} ประวัติความเป็นมา ${historyText} และสถานที่แนะนำคือ ${descText}`;
+          langCode = 'th-TH';
+          bubbleIntro = `🔊 กำลังเล่าประวัติ ${name}...`;
+        } else if (currentLang === 'cn') {
+          textToRead = `这是 ${name}。 历史背景：${historyText}。 推荐景点：${descText}`;
+          langCode = 'zh-CN';
+          bubbleIntro = `🔊 正在讲解 ${name}...`;
+        } else {
+          textToRead = `This is ${name}. History background: ${historyText}. Recommended details: ${descText}`;
+          langCode = 'en-US';
+          bubbleIntro = `🔊 Narrating ${name}...`;
+        }
+
+        currentUtterance = new SpeechSynthesisUtterance(textToRead);
+        currentUtterance.lang = langCode;
+
+        // Try to match voice
+        const voices = window.speechSynthesis.getVoices();
+        const matchedVoice = voices.find(voice => voice.lang.startsWith(langCode));
+        if (matchedVoice) {
+          currentUtterance.voice = matchedVoice;
+        }
+
+        currentUtterance.onstart = () => {
+          isSpeaking = true;
+          const mascotImg = document.querySelector('.modal-mascot-img');
+          const speechBubble = document.getElementById('mascotSpeechBubble');
+          const speechText = document.getElementById('mascotSpeechText');
+          const speechBtn = document.getElementById('modalSpeechBtn');
+
+          if (mascotImg) mascotImg.classList.add('talking');
+          if (speechBubble) {
+            speechText.innerText = bubbleIntro;
+            speechBubble.classList.add('active');
+          }
+          if (speechBtn) {
+            speechBtn.innerHTML = `<i class="fas fa-stop"></i> <span data-i18n="listen_guide">${currentLang === 'th' ? 'หยุดบรรยาย' : (currentLang === 'cn' ? '停止讲解' : 'Stop Narration')}</span>`;
+          }
+        };
+
+        currentUtterance.onend = () => {
+          stopSpeech();
+        };
+
+        currentUtterance.onerror = () => {
+          stopSpeech();
+        };
+
+        currentUtterance.pitch = 1.05;
+        currentUtterance.rate = 0.95;
+
+        window.speechSynthesis.speak(currentUtterance);
+      }
+
+      // Select elements อื่นๆ
+      const spotModal = document.getElementById('spotModal');
+      const modalCloseBtn = document.getElementById('modalCloseBtn');
+      const modalImage = document.getElementById('modalImage');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalHistory = document.getElementById('modalHistory');
+      const modalDescription = document.getElementById('modalDescription');
+      const modalNearby = document.getElementById('modalNearby');
+      const modalTimings = document.getElementById('modalTimings');
+      const modalMapBtn = document.getElementById('modalMapBtn');
+
+      document.querySelectorAll('.glass-pill').forEach((pill) => {
+        pill.addEventListener('click', (e) => {
+          const spotId = parseInt(e.currentTarget.getAttribute('data-id'), 10);
+          const spot = spots.find((s) => s.id === spotId);
+          if (!spot || !HOME_FEATURED_IDS.includes(spot.id)) return;
+
+          document.querySelectorAll('.glass-pill.active').forEach((el) => el.classList.remove('active'));
+          e.currentTarget.classList.add('active');
+
+          const { lat, lng } = getSpotLatLng(spot);
+          if (lat != null && lng != null) {
+            map.setView([lat, lng], 16, { animate: true, duration: 1.2 });
+            // showMapPointer(spot, e.currentTarget); // ลบลูกศรชี้ตามคำขอผู้ใช้
+            highlightMapSpot(spot);
+
+            if (mapMarkers[spotId]) {
+              setTimeout(() => mapMarkers[spotId].openPopup(), 1200);
+            }
+          }
+
+          setTimeout(() => openDetailModal(spot), 1800);
+        });
+      });
+
+      // Open Modal
+      function openDetailModal(spot) {
+        applySpotImage(modalImage, spot);
+        modalTitle.innerText = spot[`name_${currentLang}`] || spot.name_th;
+        modalHistory.innerText = spot[`history_${currentLang}`] || spot.history_th || spot.history;
+        modalDescription.innerText = spot[`description_${currentLang}`] || spot.description_th || spot.description;
+        modalNearby.innerText = spot.nearby_landmarks.join(', ');
+
+        modalTimings.innerHTML = '';
+        if (spot.ev_time) {
+          spot.ev_time.forEach(time => {
+            const badge = document.createElement('span');
+            badge.className = 'time-badge';
+            badge.innerHTML = `<i class="far fa-clock"></i> ${time}`;
+            modalTimings.appendChild(badge);
+          });
+        }
+
+        const speechBtn = document.getElementById('modalSpeechBtn');
+        if (speechBtn) {
+          speechBtn.innerHTML = `<i class="fas fa-volume-up"></i> <span data-i18n="listen_guide">${getTranslation('listen_guide')}</span>`;
+          speechBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (isSpeaking) {
+              stopSpeech();
+            } else {
+              startSpeech(spot);
+            }
+          };
+        }
+
+        modalMapBtn.href = `./map.html?spot=${spot.id}`;
+        spotModal.classList.add('active');
+      }
+
+      function hideMapPointer() {
+        const overlay = document.getElementById('mapPointerOverlay');
+        if (overlay) overlay.classList.add('hidden');
+      }
+
+      function showMapPointer(spot, buttonEl) {
+        const overlay = document.getElementById('mapPointerOverlay');
+        if (!overlay || !spot || !buttonEl) return;
+
+        const fromRect = buttonEl.getBoundingClientRect();
+        const mapRect = map.getContainer().getBoundingClientRect();
+        const { lat, lng } = getSpotLatLng(spot);
+        const targetPoint = map.latLngToContainerPoint([lat, lng]);
+        const toX = mapRect.left + targetPoint.x;
+        const toY = mapRect.top + targetPoint.y;
+        const fromX = fromRect.left + fromRect.width / 2;
+        const fromY = fromRect.top + fromRect.height / 2;
+        const deltaX = toX - fromX;
+        const deltaY = toY - fromY;
+        const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+        const line = overlay.querySelector('.map-pointer-line');
+        const tip = overlay.querySelector('.map-pointer-tip');
+        const pulse = overlay.querySelector('.map-pointer-pulse');
+
+        if (!line || !tip || !pulse) return;
+
+        line.style.width = `${Math.max(length, 14)}px`;
+        line.style.top = `${fromY}px`;
+        line.style.left = `${fromX}px`;
+        line.style.transform = `translateY(-50%) rotate(${angle}deg)`;
+
+        tip.style.left = `${toX}px`;
+        tip.style.top = `${toY}px`;
+        tip.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+
+        pulse.style.left = `${toX}px`;
+        pulse.style.top = `${toY}px`;
+
+        overlay.classList.remove('hidden');
+        setTimeout(hideMapPointer, 2300);
+      }
+
+      function highlightMapSpot(spot) {
+        if (!spot || !map) return;
+        if (activeTargetCircle) {
+          map.removeLayer(activeTargetCircle);
+          activeTargetCircle = null;
+        }
+
+        const { lat, lng } = getSpotLatLng(spot);
+        activeTargetCircle = L.circle([lat, lng], {
+          radius: 80,
+          color: '#7A2882',
+          fillColor: 'rgba(122, 40, 130, 0.16)',
+          weight: 3,
+          dashArray: '6 4'
+        }).addTo(map);
+
+        setTimeout(() => {
+          if (activeTargetCircle) {
+            map.removeLayer(activeTargetCircle);
+            activeTargetCircle = null;
+          }
+        }, 2300);
+      }
+
+      // Close modal events
+      modalCloseBtn.addEventListener('click', () => {
+        spotModal.classList.remove('active');
+        hideMapPointer();
+        stopSpeech();
+      });
+      spotModal.addEventListener('click', (e) => {
+        if (e.target === spotModal) {
+          spotModal.classList.remove('active');
+          hideMapPointer();
+          stopSpeech();
+        }
+      });
+
+      // Update spot names dynamically when language switcher events fire
+      window.addEventListener('languageChanged', () => {
+        stopSpeech();
+        updateHomeStopLabels(spots);
+
+        HOME_FEATURED_IDS.forEach((id) => {
+          if (mapMarkers[id]) {
+            const spot = spots.find((s) => s.id === id);
+            if (spot) {
+              mapMarkers[id].setPopupContent(
+                `<b style="color:#7A2882;">${spot[`name_${currentLang}`] || spot.name_th}</b><br><span style="font-size:11px;">คลิกเพื่อดูรายละเอียด</span>`
+              );
+            }
+          }
+        });
+
+        if (spotModal.classList.contains('active')) {
+          const activeTitle = modalTitle.innerText;
+          const currentSpot = spots.find(s => s.name_th === activeTitle || s.name_en === activeTitle || s.name_cn === activeTitle);
+          if (currentSpot) {
+            openDetailModal(currentSpot);
+          }
+        }
+      });
+
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,508 @@
+[
+  {
+    "id": 1,
+    "name_th": "สถานีขนส่งเชียงรายแห่งที่ 1",
+    "name_en": "Chiang Rai Bus Terminal 1 ",
+    "name_cn": "清莱第一客运站",
+    "image": "place/dt.jpg",
+    "latitude": 19.9046,
+    "longitude": 99.8342,
+    "description_th": "สถานีขนส่งเชียงรายแห่งที่ 1 (Downtown) เปิดดำเนินการตั้งแต่ปี พ.ศ. 2514 ปัจจุบันเป็นศูนย์กลางการท่องเที่ยว และขนส่งมวลชนภายใต้การดูแลของเทศบาลนครเชียงราย โดดเด่นด้วยภาพวาดฝาผนังที่ สะท้อนอัตลักษณ์ชาติพันธุ์ และสถาปัตยกรรมล้านนา เป็นจุดเริ่มต้นของเส้นทางท่องเที่ยว สายศิลปวัฒนธรรม นอกจากนี้ยังมีห้องปฏิบัติการอัจฉริยะ IOC (Intelligence Operation Center) ที่ใช้นวัตกรรมดิจิทัลบริหาร จัดการเมืองและคมนาคมอย่างมีประสิทธิภาพ เชื่อมโยงอดีตสู่การเป็น Smart City อย่างเต็มรูปแบบ ",
+    "description_en": "Chiang Rai Bus Terminal 1 (Downtown), which began operations in 1971, is currently a transportation hub for the city under the care of the Chiang Rai City Municipality. It is distinguished by murals reflecting ethnic identity and Lanna architecture, serving as the starting point for the cultural and artistic tourism route. Additionally, it houses an intelligent operation center (IOC) that utilizes digital innovation to efficiently manage the city and its transportation, seamlessly blending the past with a full-fledged Smart City vision.",
+    "description_cn": "清莱第一客运站（市中心）自1971年开始运营，现已成为清莱市的交通枢纽之一。该站以反映当地民族特色和兰纳建筑风格的壁画为特色，是文化艺术旅游路线的起点。此外，车站还配备了智能运营中心（IOC），利用数字创新高效管理城市交通，将传统历史与智慧城市理念相结合。",
+    "history_th": "สถานีขนส่งผู้โดยสารประจำจังหวัดเชียงรายแห่งแรก ตั้งอยู่ใจกลางเมือง เป็นศูนย์กลางการเดินทางของชุมชนและนักท่องเที่ยวมาอย่างยาวนาน",
+    "history_en": "The first provincial bus terminal in Chiang Rai, located in the heart of the city, serving as a travel hub for locals and tourists for decades.",
+    "history_cn": "清莱府设立的第一座客运站，坐落于市中心，数十年来一直是当地居民和游客的重要交通枢纽。",
+    "nearby_landmarks": [
+      "ตลาดสดเทศบาล",
+      "หอนาฬิกา",
+      "โรงภาพยนต์เชียงรายรามา",
+      "เชียงรายไนท์บราซ่า"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+  {
+    "id": 2,
+    "name_th": "โรงพยาบาลเชียงรายประชานุเคราะห์",
+    "name_en": "Chiangrai Prachanukroh Hospital",
+    "name_cn": "清莱普拉查努科医院",
+    "image": "place/crh.jpg",
+    "latitude": 19.9016, 
+    "longitude": 99.8295,
+    "description_th": "ศูนย์บริการสาธารณสุขและโรงพยาบาลประจำจังหวัดเชียงราย ให้การดูแลสุขภาพประชาชนในภูมิภาค",
+    "description_en": "The main public provincial hospital of Chiang Rai, offering extensive health services to the local community.",
+    "description_cn": "清莱府最主要的公立综合医院，为本地居民提供全面的医疗健康服务。",
+    "history_th": "ก่อตั้งขึ้นเพื่อบริการประชาชนในการรักษาพยาบาลระดับสูง และเป็นสถานที่ฝึกหัดบุคลากรทางการแพทย์ที่สำคัญของจังหวัด",
+    "history_en": "Established as the main regional medical care and teaching hospital, playing a crucial role in public health.",
+    "history_cn": "旨在提供高水平的区域性医疗和教学服务，在清莱医疗卫生事业中起着至关重要的作用。",
+    "nearby_landmarks": [
+      "วิทยาลัยเทคนิคเชียงราย"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 3,
+    "name_th": "วิทยาลัยเทคนิคเชียงราย",
+    "name_en": "Chiang Rai Technical College",
+    "name_cn": "清莱技术学院",
+    "image": "place/nds.webp",
+    "latitude": 19.9030, 
+    "longitude": 99.8283,
+    "description_th": "สถาบันการศึกษาสายอาชีพชั้นนำในจังหวัดเชียงราย มุ่งผลิตบุคลากรที่มีทักษะวิชาชีพและการทำงานชั้นเยี่ยม",
+    "description_en": "A premier vocational education institution in Chiang Rai, cultivating skilled technical professionals for the region.",
+    "description_cn": "清莱领先的职业技术教育机构，致力于为本地区培养高素质的技术专业人才。",
+    "history_th": "พัฒนามาอย่างยาวนานเพื่อตอบสนองการขยายตัวทางอุตสาหกรรมและการพัฒนาแรงงานวิชาชีพในภาคเหนือของไทย",
+    "history_en": "Developed to support industrial expansion and professional vocational training in Northern Thailand.",
+    "history_cn": "为支持泰国北部的工业发展和职业技术培训，长期以来不断进行升级和建设。",
+    "nearby_landmarks": [
+      "โรงเรียนสามัคคีวิทยาคม"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 4,
+    "name_th": "หอนาฬิกาเฉลิมพระเกียรติฯ",
+    "name_en": "Chiang Rai Clock Tower",
+    "name_cn": "清莱钟楼",
+    "image": "place/clocktown.webp",
+    "latitude": 19.90716060850042,
+    "longitude": 99.8309580513632,
+    "description_th": "หอนาฬิกาสีทองที่งดงามวิจิตรตระการตา ออกแบบโดยอาจารย์เฉลิมชัย โฆษิตพิพัฒน์ ไฮไลท์การแสดงแสงสีเสียงยามค่ำคืน",
+    "description_en": "A spectacular golden clock tower designed by national artist Chalermchai Kositpipat, featuring nightly light and sound shows.",
+    "description_cn": "由泰国著名艺术家许兰斋（Chalermchai Kositpipat）设计的金色钟楼，每晚都有精彩的光影音乐秀。",
+    "history_th": "หอนาฬิกาเฉลิมพระเกียรติเชียงราย งานประติมากรรมทองสัมฤทธิ์อันวิจิตร ออกแบบโดยศิลปินแห่งชาติ อาจารย์เฉลิมชัย โฆษิตพิพัฒน์ เพื่อเฉลิมพระเกียรติสมเด็จพระนางเจ้าสิริกิติ์ พระบรมราชินีนาถ พระบรมราชชนนีพันปีหลวง ไฮไลต์สำคัญคือการแสดงแสงสีเสียงประกอบเพลง เชียงรายรำลึก ทุกคืนเวลา 19.00, 20.00 และ 21.00 น. ตั้งอยู่ใจกลางเมือง เดินทางสะดวกจากสถานีขนส่งแห่งที่ 1 เพียง 7 นาที รอบบริเวณแวดล้อมด้วยร้านอาหารและคาเฟ่ยอดนิยม",
+    "history_en": "Chiang Rai Clock Tower, an exquisite bronze sculpture designed by National Artist Chalermchai Kositpipat, was built to commemorate Her Majesty Queen Sirikit The Queen Mother. The highlight is the light and sound show accompanied by the song 'Chiang Rai Ramluek' every evening at 7:00, 8:00, and 9:00 PM. Located in the city center, it is conveniently accessible from Bus Terminal 1, just a 7-minute ride. The area is surrounded by popular restaurants and cafes.",
+    "history_cn": "清莱钟楼，这座精美的铜雕由泰国国宝级艺术家许兰斋（Chalermchai Kositpipat）设计，旨在纪念诗丽吉王后殿下。夜晚，钟楼会伴随着经典歌曲《清莱怀古》（Chiang Rai Ramluek）上演绚烂的灯光秀，时间分别为晚上7点、8点和9点。钟楼位于市中心，从第一客运站仅需7分钟车程即可到达，周边遍布热门餐厅和咖啡馆。",
+    "nearby_landmarks": [
+      "ตลาดสดเทศบาล",
+      "สถานีขนส่งผู้โดยสาร แห่งที่ 1",
+      "ซอยเจ็ดยอด"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 5,
+    "name_th": "ตลาดสดเทศบาลนครเชียงราย",
+    "name_en": "Kad Luang Market",
+    "name_cn": "清莱市场",
+    "image": "place/market.jpg",
+    "latitude": 19.909296, 
+    "longitude": 99.830627,
+    "description_th": "ตลาดสดเก่าแก่ใจกลางเมืองเชียงราย แหล่งรวมสินค้าพื้นเมือง ผักผลไม้สด อาหารท้องถิ่นและวิถีชีวิตคนเมืองอย่างแท้จริง",
+    "description_en": "A historic wet market in the city center, offering local handicrafts, fresh produce, traditional foods, and authentic local vibes.",
+    "description_cn": "市中心历史悠久的传统菜市场，汇集了当地手工艺品、新鲜果蔬及本土美食，展现纯正市井生活。",
+    "history_th": "กาดหลวงเชียงราย ศูนย์กลางวิถีชีวิตและเศรษฐกิจใจกลางเมือง ที่มีประวัติศาสตร์ยาวนานกว่า 75 ปี (ก่อตั้ง พ.ศ. 2493) ภายใต้การบริหารจัดการของเทศบาลนครเชียงราย เพื่อส่งเสริม อัตลักษณ์ท้องถิ่น และกระจายรายได้สู่ชุมชน ตลาดแห่งนี้โดดเด่น ด้วยสถาปัตยกรรมดั้งเดิมที่เป็นเอกลักษณ์ พร้อมจำหน่ายสินค้าพื้นเมือง อาหารเหนือเลิศรส เช่น ไส้อั่ว น้ำพริกหนุ่ม ข้าวแรมฟืน และงานหัตถกรรมประณีตจากกลุ่มชาติพันธุ์ การันตีคุณภาพด้วยรางวัลตลาดดีเด่น ระดับภาคเหนือ เป็นจุดหมายปลายทางที่ไม่ควรพลาดเพื่อสัมผัสเสน่ห์ล้านนาอย่างแท้จริง",
+    "history_en": "Kad Luang Chiang Rai, a vibrant economic and cultural hub in the heart of the city, boasts a rich history spanning over 75 years since its establishment in 1950. Managed by the Chiang Rai Municipality, the market plays a vital role in preserving local identity and supporting community livelihoods. Its unique traditional architecture and wide selection of regional specialties, including sai oua, nam prik num, and khao soi, have earned it recognition as a leading market in Northern Thailand. A must-visit destination for those seeking authentic Lanna charm.",
+    "history_cn": "清莱市场是清莱市历史最悠久的市场之一，已有75多年的历史。它不仅是当地经济和文化的中心，也是展示北部兰纳传统和反映当地社区生活的重要场所。市场提供丰富多样的当地商品，包括手工艺品、新鲜农产品、传统食品和各种当地特色美食。清莱市场以其独特的传统建筑风格和丰富的商品种类而闻名，曾获得北部地区优秀市场奖，是体验兰纳文化的必游之地。",
+    "nearby_landmarks": [
+      "หอนาฬิกา (เก่า)",
+      "สวนตุงและโคม"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+  
+  {
+    "id": 6,
+    "name_th": "โรงเรียนสามัคคีวิทยาคม",
+    "name_en": "Samakkhi Witthayakhom School",
+    "name_cn": "萨马基维塔雅贡学校",
+    "image": "place/swk.webp",
+    "latitude": 19.906849, 
+    "longitude": 99.827166,
+    "description_th": "โรงเรียนมัธยมศึกษาประจำจังหวัดที่เก่าแก่และมีชื่อเสียง สถาปัตยกรรมอาคารเรียนสวยงามร่มรื่นด้วยต้นไม้ใหญ่",
+    "description_en": "The oldest and most prestigious secondary school in the province, featuring elegant school buildings amidst shaded historic gardens.",
+    "description_cn": "该府历史最悠久、声誉最高的中学，拥有优美的校园环境和多座古色古香的教学楼。",
+    "history_th": "โรงเรียนสามัคคีวิทยาคม สถานศึกษาแห่งแรกของจังหวัดเชียงราย  ก่อตั้งเมื่อปี พ.ศ. 2451 มีประวัติศาสตร์ยาวนานกว่า 100 ปี โดดเด่นด้วย อาคาร 1 สถาปัตยกรรมอนุรักษ์สมัยสงครามโลกครั้งที่ 2 เป็นแหล่งเรียนรู้ที่มีอัตลักษณ์เฉพาะตัว พร้อมสิ่งศักดิ์สิทธิ์คู่โรงเรียนอย่างพระพุทธมณีไมตรีรัตนะ และเจ้าพ่อสันป่าแดง ปัจจุบันเป็นโรงเรียนมัธยมศึกษาขนาดใหญ่พิเศษที่เปี่ยมด้วยคุณภาพและมนต์ขลังแห่งอดีต",
+    "history_en": "Established in 1908 by Phraya Srisuriyaratchawaranuwat, the former governor of Chiang Rai, to provide education for local youths. This historic institution is renowned for its beautiful architecture and serene, tree-lined campus, making it a beloved landmark in the heart of Chiang Rai.",
+    "history_cn": "由清莱府前府尹于1908年创办，旨在为本地青少年提供优质的教育服务。这所历史悠久的学府以其优雅的建筑和宁静的校园环境而闻名，是清莱市中心的标志性建筑之一。",
+    "nearby_landmarks": [
+      "หอนาฬิกา",
+      "วัดมิ่งเมือง",
+      "วิทยาลัยเทคนิคเชียงราย"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 7,
+    "name_th": "สำนักงานทรัพยากรธรรมชาติและสิ่งแวดล้อมจังหวัดเชียงราย",
+    "name_en": "Provincial Office of Natural Resources and Environment",
+    "name_cn": "清莱自然资源与环境办公室",
+    "image": "place/tham.jpg",
+    "latitude": 19.909098848159857, 
+    "longitude": 99.8236135886191,
+    "description_th": "หน่วยงานหลักที่ดูแลด้านทรัพยากรธรรมชาติและอนุรักษ์สิ่งแวดล้อมที่งดงามของจังหวัดเชียงราย",
+    "description_en": "The primary agency responsible for managing natural resources and environmental conservation in Chiang Rai.",
+    "description_cn": "负责管理清莱府自然资源和推进生态环境保护的主要政府机构。",
+    "history_th": "จัดตั้งขึ้นเพื่อส่งเสริม สนับสนุน และดำเนินนโยบายด้านป่าไม้ แหล่งน้ำ และอากาศสะอาดให้ยั่งยืนเคียงคู่เมืองเชียงราย",
+    "history_en": "Established to promote, support, and implement sustainable policies on forests, water resources, and clean air.",
+    "history_cn": "旨在推广和执行森林保护、水资源可持续利用以及清洁空气政策，呵护美丽清莱。",
+    "nearby_landmarks": [
+      "เทศบาลนครเชียงราย"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 8,
+    "name_th": "เทศบาลนครเชียงราย",
+    "name_en": "Chiang Rai Municipality",
+    "name_cn": "清莱市政府",
+    "image": "place/tesaban.webp",
+    "latitude": 19.9094918560213, 
+    "longitude": 99.82658518089939,
+    "description_th": "ที่ทำการผู้บริหารเทศบาลนครเชียงราย ศูนย์กลางการพัฒนาเมือง บริการสาธารณะ และการส่งเสริมวัฒนธรรม",
+    "description_en": "The administrative center of Chiang Rai municipal city, managing urban planning, public services, and tourism events.",
+    "description_cn": "清莱城市行政服务中心，负责城市规划、公共服务和旅游文化推广。",
+    "history_th": "พัฒนาจากสุขาภิบาลสู่เทศบาลนคร เพื่อรองรับการเจริญเติบโตอย่างรวดเร็วและการเป็นศูนย์กลางทางวัฒนธรรมการท่องเที่ยวล้านนา",
+    "history_en": "Upgraded from a local district council to a grand municipality to support rapidly expanding Lanna heritage and global tourism.",
+    "history_cn": "从地方议会升级为大都市政府，以支持迅速发展的兰纳传统产业和国际旅游业。",
+    "nearby_landmarks": [
+      "โรงพยาบาลโอเวอร์บรุ๊ค"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 9,
+    "name_th": "บ้านแห่งความทรงจำ",
+    "name_en": "The House of Memory",
+    "name_cn": "记忆之家",
+    "image": "place/memory.webp",
+    "latitude": 19.91293658945379, 
+    "longitude": 99.82912937530368,
+    "description_th": "บ้านโบราณสไตล์โคโลเนียลที่ปรับปรุงเป็นพิพิธภัณฑ์ประวัติศาสตร์และร้านกาแฟ ตั้งอยู่ใจกลางเมืองเชียงราย",
+    "description_en": "A historic colonial-style house transformed into a museum and café, showcasing Chiang Rai's medical history and vintage photography.",
+    "description_cn": "一座翻修后的科罗尼亚风格老宅，现已成为历史博物馆和咖啡馆，展示清莱的医疗历史与怀旧影像。",
+    "history_th": "อดีตบ้านพักแพทย์ผู้ก่อตั้งโรงพยาบาลโอเวอร์บรุ๊ค ปัจจุบันจัดแสดงประวัติศาสตร์ทางการแพทย์ ภาพถ่ายขาว-ดำ และเรื่องราวเกี่ยวกับการก่อตั้งโรงพยาบาลโดยคณะมิชชันนารีอเมริกัน นอกจากนี้ยังมีมุมร้านกาแฟเล็กๆ ให้นั่งพักผ่อนในบรรยากาศย้อนยุค",
+    "history_en": "Founded in 1903 by American missionary physician Dr. William A. Briggs, it now exhibits medical history, vintage photographs, and the story of early hospital care in Chiang Rai.",
+    "history_cn": "由美国传教士医生威廉·布里格斯（William A. Briggs）博士于1903年创立，现为展示医疗历史、老照片和早期医院故事的博物馆，并设有怀旧咖啡角。",
+    "nearby_landmarks": [
+      "ศาลากลางจังหวัดเชียงราย หลังเก่า",
+      "บ้านพักแพทย์",
+      "โรงพยาบาลโอเวอร์บรุ๊ค"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 10,
+    "name_th": "ศาลากลางจังหวัดเชียงราย (หลังเก่า)",
+    "name_en": "Old Chiang Rai Provincial Hall",
+    "name_cn": "旧清莱府政厅",
+    "image": "place/old.jpg",
+    "latitude": 19.911732999959078, 
+    "longitude": 99.8315685908548,
+    "description_th": "อาคารประวัติศาสตร์สถาปัตยกรรมล้านนาผสมยุโรป ปัจจุบันเป็นโบราณสถานและพิพิธภัณฑ์จัดแสดงประวัติศาสตร์เมืองเชียงราย",
+    "description_en": "A historical landmark combining Lanna and European architecture, now a registered heritage site and history museum.",
+    "description_cn": "融合了兰纳与欧洲风格的历史建筑，现为受保护的古迹及展示清莱历史的博物馆。",
+    "history_th": "อาคารศาลากลางจังหวัดเชียงรายหลังเก่า สร้างขึ้นเมื่อ พ.ศ. 2440 เป็นศาลากลางที่เก่าแก่ที่สุดในประเทศไทย ที่ยังคงเหลืออยู่ ออกแบบโดยนายแพทย์วิลเลี่ยม เอ. บริกส์ โดดเด่นด้วยสถาปัตยกรรมแบบโคโลเนียล โครงสร้างก่ออิฐถือปูน พร้อมซุ้มโค้ง (Arch) อันเป็นเอกลักษณ์ ได้รับการขึ้นทะเบียน เป็นโบราณสถาน เมื่อปี พ.ศ. 2520 ปัจจุบันอยู่ระหว่างการปรับปรุง โดยองค์การบริหารส่วนจังหวัดเชียงราย เพื่อจัดตั้งเป็น พิพิธภัณฑ์ภาพเชียงราย ศูนย์กลางแห่งการเรียนรู้ประวัติศาสตร์ผ่านภาพถ่าย ",
+    "history_en": "Built during the reign of King Rama V, it stands as a symbol of the administrative history and historical development of Chiang Rai.",
+    "history_cn": "建于拉玛五世国王统治时期，是清莱过去行政历史与城市发展演变的重要象征。",
+    "nearby_landmarks": [
+      "สถานีตำรวจภูธรเชียงราย"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 11,
+    "name_th": "สถานีตำรวจภูธรเชียงราย",
+    "name_en": "Chiang Rai Police Station",
+    "name_cn": "清莱警察局",
+    "image": "place/cop.webp",
+    "latitude": 19.91145563899937, 
+    "longitude": 99.83247646475027,
+    "description_th": "สถานีตำรวจภูธรเมืองเชียงราย ให้บริการดูแลความปลอดภัย ความสงบเรียบร้อย และอำนวยความยุติธรรมแก่ประชาชน",
+    "description_en": "The main district police station of Chiang Rai, maintaining public security and helping visitors and citizens alike.",
+    "description_cn": "清莱主要分区警察局，负责维护公共安全并为居民和游客提供帮助。",
+    "history_th": "ตั้งอยู่ใจกลางย่านราชการทางประวัติศาสตร์ เป็นที่พึ่งทางความปลอดภัยและความสงบสุขของเมืองยาวนานหลายทศวรรษ",
+    "history_en": "Located in the historic government quarters, serving as the guardian of public safety and law enforcement for decades.",
+    "history_cn": "坐落于历史悠久的行政区内，数十年来一直保障着城市秩序和市民安全。",
+    "nearby_landmarks": [
+      "สวนตุงและโคมนครเชียงราย"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 12,
+    "name_th": "สวนตุงและโคมนครเชียงราย",
+    "name_en": "Tung and Khom Park",
+    "name_cn": "旗灯公园",
+    "image": "place/ds.jpg",
+    "latitude": 19.908248970097638, 
+    "longitude": 99.83465303660817,
+    "description_th": "สวนสาธารณะสวยงามใจกลางเมืองเชียงราย สถานที่จัดเทศกาลไม้ดอกอาเซียนและการแสดงวัฒนธรรมล้านนา",
+    "description_en": "A beautiful park in downtown Chiang Rai, home to the annual ASEAN Flower Festival and Lanna cultural events.",
+    "description_cn": "位于清莱市中心的美丽公园，是东盟花卉节及兰纳文化表演的主要举办场地。",
+    "history_th": "เดิมเคยเป็นเรือนจำจังหวัดเชียงราย ต่อมาได้รับการปรับปรุงภูมิทัศน์ให้เป็นสวนสาธารณะเพื่อประโยชน์สุขของชาวเชียงรายและต้อนรับนักท่องเที่ยว",
+    "history_en": "Formerly the site of the Chiang Rai Provincial Prison, it was renovated into a beautiful public park for the recreation of citizens and tourists.",
+    "history_cn": "原址为清莱府监狱，后被改造重建为休闲公园，供广大市民及游客休闲娱乐。",
+    "nearby_landmarks": [
+      "วิทยาลัยอาชีวศึกษาเชียงราย",
+      "ตลาดสดเทศบาล"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 13,
+    "name_th": "วิทยาลัยอาชีวศึกษาเชียงราย",
+    "name_en": "Chiang Rai Vocational College",
+    "name_cn": "清莱职业学院",
+    "image": "place/nds.webp",
+    "latitude": 19.909154784545258, 
+    "longitude": 99.83629224153651,
+    "description_th": "สถาบันการศึกษาวิชาชีพด้านคหกรรม ศิลปกรรม พาณิชยกรรม และอุตสาหกรรมท่องเที่ยวชั้นนำ",
+    "description_en": "A leading vocational college specializing in hospitality, business, arts, and tourism studies in Chiang Rai.",
+    "description_cn": "一所以酒店管理、商业、艺术和旅游服务业为特色专业的领先职业技术学院。",
+    "history_th": "มุ่งเน้นการผลิตกำลังคนที่มีสมรรถนะวิชาชีพเพื่อตอบสนองต่อตลาดเศรษฐกิจสร้างสรรค์ในภูมิภาคอาเซียน",
+    "history_en": "Established to educate and prepare highly skilled talents for creative services and business sectors in the ASEAN region.",
+    "history_cn": "旨在培养高技能的复合型专业人才，服务东盟各国的创意和商业发展需求。",
+    "nearby_landmarks": [
+      "อนุสาวรีย์พ่อขุนเม็งรายมหาราช"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 14,
+    "name_th": "อนุสาวรีย์พ่อขุนเม็งรายมหาราช",
+    "name_en": "King Mengrai Monument",
+    "name_cn": "孟莱王纪念碑",
+    "image": "place/km.webp",
+    "latitude": 19.91045483621074, 
+    "longitude": 99.84015722051097,
+    "description_th": "อนุสาวรีย์ที่เคารพสักการะของชาวเชียงราย สร้างขึ้นเพื่อรำลึกถึงพระผู้สถาปนาเมืองเชียงราย",
+    "description_en": "A highly revered monument dedicated to the great founder of Chiang Rai city.",
+    "description_cn": "清莱市民极其尊崇的纪念碑，旨在缅怀清莱城的伟大缔造者——孟莱王。",
+    "history_th": "พ่อขุนเม็งรายมหาราชทรงสถาปนาเมืองเชียงรายขึ้นในปี พ.ศ. 1805 พระองค์ทรงรวบรวมอาณาจักรล้านนาให้เป็นปึกแผ่นและรุ่งเรือง",
+    "history_en": "King Mengrai the Great founded Chiang Rai in 1262 AD. He successfully unified and brought prosperity to the Lanna Kingdom.",
+    "history_cn": "孟莱王于公元1262年建立清莱城，并统一了兰纳王国，开创了繁荣的兰纳盛世。",
+    "nearby_landmarks": [
+      "วัดศรีเกิด"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 15,
+    "name_th": "วัดศรีเกิด",
+    "name_en": "Wat Sri Koed",
+    "name_cn": "斯里科德寺",
+    "image": "place/sri.jpg",
+    "latitude": 19.90704606465498, 
+    "longitude": 99.83926745396701,
+    "description_th": "วัดเก่าแก่อันร่มรื่นในเมืองเชียงราย ประดิษฐานพระประธานและปูชนียวัตถุที่มีศิลปกรรมวิจิตรงดงามยิ่ง",
+    "description_en": "A peaceful and ancient temple in Chiang Rai, home to majestic Lanna-style Buddha status and beautiful architecture.",
+    "description_cn": "一所幽静典雅的兰纳式古寺，供奉着神圣的大佛，保存有多件精湛的兰纳佛教艺术珍品。",
+    "history_th": "มีบทบาทสำคัญทางศาสนาคู่กับประวัติศาสตร์ชุมชนเมืองเชียงรายมาช้านาน เป็นสถานที่ศึกษาและทำนุบำรุงวัฒนธรรมท้องถิ่น",
+    "history_en": "Has played a spiritual role in the Chiang Rai community for centuries, preserving unique Buddhist arts and traditions.",
+    "history_cn": "数百年以来一直是清莱社区重要的宗教修行地，对传承兰纳佛教传统发挥着重要作用。",
+    "nearby_landmarks": [
+      "ศูนย์การเรียนรู้เชียงราย"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  },
+
+  {
+    "id": 16,
+    "name_th": "ศูนย์การเรียนรู้เชียงราย เมืองอาหารปลอดภัย",
+    "name_en": "Chiang Rai Safe Food Learning Center",
+    "name_cn": "清莱安全食品学习中心",
+    "image": "place/food.webp",
+    "latitude": 19.90640873173645, 
+    "longitude": 99.83534343186449,
+    "description_th": "ศูนย์กลางการเรียนรู้ด้านการเกษตรปลอดภัยและการแปรรูปอาหารท้องถิ่น ส่งเสริมสุขภาพและการบริโภคที่ปลอดภัยของชาวเชียงราย",
+    "description_en": "A learning center focusing on organic farming and local food processing to promote healthy consumption.",
+    "description_cn": "专注于安全农业和当地食品加工的学习中心，致力于促进清莱市民的健康饮食。",
+    "history_th": "ก่อตั้งขึ้นโดยเทศบาลนครเชียงรายเพื่อขับเคลื่อนนโยบายเมืองอาหารปลอดภัย ส่งเสริมและพัฒนาความรู้ด้านการทำเกษตรอินทรีย์และการแปรรูปอย่างยั่งยืน",
+    "history_en": "Established by Chiang Rai Municipality to drive the safe food city policy, promoting organic farming knowledge and sustainable food processing.",
+    "history_cn": "由清莱市政府创立，旨在推动“食品安全城市”政策，普及有机农业知识并促进可持续食品加工。",
+    "nearby_landmarks": [
+      "สถานีขนส่งผู้โดยสาร แห่งที่ 1",
+      "หอนาฬิกา"
+    ],
+    "ev_time": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00"
+    ]
+  }
+]
