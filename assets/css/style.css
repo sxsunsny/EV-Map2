@@ -14,7 +14,7 @@
 
 .dark-mode {
   --bg-color: #121212;
-  --text-color: #f1f1f1;
+  --text-color: #ffffff;
   --glass-bg: rgba(30, 30, 30, 0.7);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
