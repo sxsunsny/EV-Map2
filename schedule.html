@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>EV Bus Schedule - Chiang Rai</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#7A2882',
+            'primary-light': '#9d42a6',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 pb-20 md:pb-0 min-h-screen flex flex-col">
+
+  <!-- Desktop Navigation (Same as index.html) -->
+  <nav class="glass fixed top-0 w-full z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <!-- Logos -->
+        <div class="flex-shrink-0 flex items-center space-x-3">
+          <img src="pic/culture.jpg" alt="Culture"
+            class="h-10 w-10 object-contain drop-shadow-md bg-white rounded-full p-1" title="วัฒนธรรมจังหวัดเชียงราย">
+          <img src="pic/swk.PNG" alt="School" class="h-10 w-10 object-contain drop-shadow-md bg-white rounded-full p-1"
+            title="โรงเรียนสามัคคีวิทยาคม">
+          <img src="pic/sc.PNG" alt="Council" class="h-10 w-10 object-contain drop-shadow-md bg-white rounded-full p-1"
+            title="คณะกรรมการสภานักเรียน">
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="./index.html" class="nav-link text-white-800 dark:text-gray-200 font-semibold"
+            data-i18n="nav_home">หน้าแรก</a>
+          <a href="./map.html" class="nav-link text-white-800 dark:text-gray-200 font-semibold"
+            data-i18n="nav_map">แผนที่</a>
+          <a href="./schedule.html" class="nav-link active text-white-800 dark:text-gray-200 font-semibold"
+            data-i18n="nav_schedule">ตารางรถ</a>
+        </div>
+
+        <!-- Right Actions -->
+        <div class="flex items-center space-x-3">
+          <button
+            class="dark-mode-toggle w-10 h-10 rounded-full glass flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+            <i class="fas fa-moon"></i>
+          </button>
+          <div class="flex bg-gray-200 dark:bg-gray-800 rounded-full p-1 shadow-inner">
+            <button
+              class="lang-btn px-3 py-1 rounded-full text-sm font-medium transition text-gray-700 dark:text-gray-300"
+              data-lang="th">TH</button>
+            <button
+              class="lang-btn px-3 py-1 rounded-full text-sm font-medium transition text-gray-700 dark:text-gray-300"
+              data-lang="en">EN</button>
+            <button
+              class="lang-btn px-3 py-1 rounded-full text-sm font-medium transition text-gray-700 dark:text-gray-300"
+              data-lang="cn">CN</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Bottom Navigation (Same as index.html) -->
+  <nav
+    class="md:hidden fixed bottom-0 w-full glass rounded-t-3xl z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+    <div class="flex justify-around items-center h-16">
+      <a href="./index.html"
+        class="mobile-nav-link flex flex-col items-center justify-center w-full h-full text-gray-500 transition relative">
+        <i class="fas fa-home text-xl mb-1"></i>
+        <span class="text-[10px] font-medium" data-i18n="nav_home">หน้าแรก</span>
+      </a>
+      <a href="./map.html"
+        class="mobile-nav-link flex flex-col items-center justify-center w-full h-full text-gray-500 transition relative">
+        <i class="fas fa-map-marked-alt text-xl mb-1"></i>
+        <span class="text-[10px] font-medium" data-i18n="nav_map">แผนที่</span>
+      </a>
+      <a href="./schedule.html"
+        class="mobile-nav-link flex flex-col items-center justify-center w-full h-full text-gray-500 transition relative">
+        <i class="fas fa-bus text-xl mb-1"></i>
+        <span class="text-[10px] font-medium" data-i18n="nav_schedule">ตารางรถ</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-28 flex-grow px-4 max-w-7xl mx-auto w-full">
+
+    <!-- Header -->
+    <div class="mb-8 anim-hidden animate-slide-up">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+        <i class="fas fa-clock text-primary"></i>
+        <span data-i18n="bus_schedule">ตารางเวลารถ EV</span>
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400 mt-2" data-i18n="schedule_subtitle">ให้บริการรอบตัวเมืองเชียงราย</p>
+    </div>
+
+    <!-- Live status: next round + reset -->
+    <div id="scheduleStatus" class="glass-card p-4 md:p-5 mb-6 anim-hidden animate-slide-up delay-100"></div>
+
+    <!-- Filters -->
+    <div
+      class="glass-card p-4 md:p-6 mb-8 anim-hidden animate-slide-up delay-100 flex flex-col md:flex-row gap-4 items-center">
+      <div class="w-full md:w-1/2 relative">
+        <div class="w-full md:w-1/4 relative">
+          <i class="fas fa-filter absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          <select id="timeFilter"
+            class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50 transition appearance-none dark:text-white">
+            <option value="all" data-i18n="filter_time">ทั้งหมด</option>
+            <option value="morning">รอบเช้า (ก่อน 12:00)</option>
+            <option value="afternoon">รอบบ่าย (หลัง 12:00)</option>
+          </select>
+          <i
+            class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Table (Hidden on mobile) -->
+    <div class="hidden md:block glass-card overflow-x-auto anim-hidden animate-slide-up delay-200 mb-12">
+      <table class="min-w-full divide-y divide-white-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-800">
+          <tr>
+            <th scope="col"
+              class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider w-16"
+              data-i18n="schedule_rank">ลำดับ</th>
+            <th scope="col"
+              class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              data-i18n="route">เส้นทาง</th>
+            <th scope="col"
+              class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              data-i18n="depart_from">จุดขึ้นรถ</th>
+            <th scope="col"
+              class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              data-i18n="arrive_at">จุดลงรถ</th>
+            <th scope="col"
+              class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              data-i18n="depart_time">เวลาออก</th>
+            <th scope="col"
+              class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              data-i18n="arrive_time">เวลาถึง</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleTableBody" class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+        </tbody>
+        <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile Cards (Hidden on desktop) -->
+    <div id="mobileScheduleCards" class="md:hidden space-y-4 mb-12">
+      <!-- Populated by JS -->
+    </div>
+
+  </main>
+
+  <script src="./assets/js/app.js"></script>
+  <script src="./assets/js/schedule.js"></script>
+</body>
+
+</html>
