@@ -127,7 +127,7 @@ function updateUserDot(latlng) {
     "></div>`;
 
   if (!userLocationMarker) {
-    const icon = L.divIcon({ html: dotHtml, iconSize:[18,18], iconAnchor:[9,9], className:'' });
+    const icon = L.divIcon({ html: dotHtml, iconSize: [18, 18], iconAnchor: [9, 9], className: '' });
     userLocationMarker = L.marker(latlng, { icon, zIndexOffset: 999 }).addTo(map);
   } else {
     userLocationMarker.setLatLng(latlng);
@@ -141,9 +141,9 @@ function updateUserDot(latlng) {
 // Markers
 // ──────────────────────────────────────────────────────────────────────────────
 function createNumberedIcon(number, isFirst) {
-  const bg     = isFirst ? '#e74c3c' : '#2ecc71';
+  const bg = isFirst ? '#e74c3c' : '#2ecc71';
   const border = isFirst ? '#c0392b' : '#27ae60';
-  const size   = number >= 10 ? '10' : '12';
+  const size = number >= 10 ? '10' : '12';
 
   return L.divIcon({
     html: `
@@ -164,7 +164,7 @@ function createNumberedIcon(number, isFirst) {
 
 function addMarkers(spots) {
   spots.forEach(spot => {
-    const icon   = createNumberedIcon(spot.id, spot.id === 1);
+    const icon = createNumberedIcon(spot.id, spot.id === 1);
     const marker = L.marker([spot.latitude, spot.longitude], { icon }).addTo(map);
     marker.on('click', () => openSpotDetail(spot));
     markers.push(marker);
@@ -255,7 +255,7 @@ function getSpotTag(spot) {
   return `#${spot.id}`;
 }
 
-window.openSpotDetailById = function(spotId) {
+window.openSpotDetailById = function (spotId) {
   const spot = allSpots.find(s => s.id === spotId);
   if (spot) openSpotDetail(spot);
 };
@@ -269,67 +269,51 @@ function openSpotDetail(spot) {
   currentDetailSpot = spot;
   map.closePopup();
 
-  const name        = spot[`name_${currentLang}`]        || spot.name_th;
+  const name = spot[`name_${currentLang}`] || spot.name_th;
   const description = spot[`description_${currentLang}`] || spot.description_th || spot.description || '';
-  const history     = spot[`history_${currentLang}`]     || spot.history_th     || spot.history || '';
-  const callout     = history || description;
+  const history = spot[`history_${currentLang}`] || spot.history_th || spot.history || '';
+  const callout = history || description;
 
-  const titleEl     = document.getElementById('spotDetailTitle');
-  const tagEl       = document.getElementById('spotDetailTag');
-  const calloutEl   = document.getElementById('spotDetailCallout');
-  const descEl      = document.getElementById('spotDetailDescription');
+  const titleEl = document.getElementById('spotDetailTitle');
+  const imageEl = document.getElementById('spotDetailImage');
+  const videoEl = document.getElementById('spotDetailVideo');
+  const tagEl = document.getElementById('spotDetailTag');
+  const calloutEl = document.getElementById('spotDetailCallout');
+  const descEl = document.getElementById('spotDetailDescription');
   const evContainer = document.getElementById('spotDetailEvTimes');
-  const nearbyCard  = document.getElementById('spotNearbyCard');
-  const pastCard    = document.getElementById('spotPastCard');
-  const videoWrap   = document.getElementById('spotDetailVideoWrap');
+  const nearbyCard = document.getElementById('spotNearbyCard');
+  const pastCard = document.getElementById('spotPastCard');
 
-  if (!titleEl || !descEl || !evContainer || !nearbyCard || !pastCard) return;
+  if (!titleEl || !imageEl || !descEl || !evContainer || !nearbyCard || !pastCard) return;
 
   titleEl.textContent = name;
+  if (videoEl) {
+    if (spot.video) {
+      videoEl.src = spot.video;
+      videoEl.classList.remove('hidden');
+      imageEl.classList.add('hidden');
+      videoEl.play().catch(e => console.log('Autoplay prevented:', e));
+    } else {
+      imageEl.src = spot.image || '';
+      imageEl.alt = name;
+      imageEl.classList.remove('hidden');
+      videoEl.classList.add('hidden');
+      videoEl.src = '';
+    }
+  } else {
+    imageEl.src = spot.image || '';
+    imageEl.alt = name;
+    imageEl.classList.remove('hidden');
+  }
   if (tagEl) tagEl.textContent = getSpotTag(spot);
   descEl.textContent = description;
-
-  // ── Video player (replaces image) ──────────────────────────────────────────
-  if (videoWrap) {
-    const videoSrc = spot.video || '';  // expects spot.video path e.g. "vid/spot1.mp4"
-    videoWrap.innerHTML = `
-      <div style="position:relative; width:100%; border-radius:12px; overflow:hidden; background:#000;">
-        <video
-          id="spotDetailVideo"
-          src="${videoSrc}"
-          style="width:100%; display:block; max-height:260px; object-fit:cover;"
-          autoplay muted loop playsinline
-          poster="${spot.image || ''}"
-        ></video>
-        <!-- Mascot bottom-left corner -->
-        <img
-          src="./pic/mascot-guide.png"
-          alt=""
-          draggable="false"
-          style="
-            position:absolute;
-            bottom: 0; left: 0;
-            width: 80px; height: auto;
-            pointer-events: none;
-            filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.4));
-            z-index: 5;
-          ">
-        <span id="spotDetailTag2" style="
-          position:absolute; top:10px; right:10px;
-          background:#7A2882; color:white;
-          font-size:11px; font-weight:800;
-          padding:3px 10px; border-radius:999px;
-          letter-spacing:0.05em;
-        ">${getSpotTag(spot)}</span>
-      </div>`;
-  }
 
   evContainer.innerHTML = (spot.ev_time || [])
     .map(t => `<span class="time-badge">${t}</span>`)
     .join('');
 
   nearbyCard.innerHTML = buildLocationCard(pickLandmarkForSection(spot, 'nearby'));
-  pastCard.innerHTML   = buildLocationCard(pickLandmarkForSection(spot, 'past'));
+  pastCard.innerHTML = buildLocationCard(pickLandmarkForSection(spot, 'past'));
 
   if (typeof applyTranslations === 'function') applyTranslations();
 
@@ -343,6 +327,11 @@ function openSpotDetail(spot) {
 
 function closeSpotDetail() {
   currentDetailSpot = null;
+  const videoEl = document.getElementById('spotDetailVideo');
+  if (videoEl) {
+    videoEl.pause();
+    videoEl.src = '';
+  }
   const overlay = document.getElementById('spotDetailOverlay');
   overlay?.classList.remove('active');
   overlay?.setAttribute('aria-hidden', 'true');
@@ -430,7 +419,7 @@ function getRouteStepLabel(spotId) {
   return `เส้นทาง EV · สถานี ${idx + 1}/${EV_ROUTE_STOPS.length}`;
 }
 
-window.startNavigation = function(spotId) {
+window.startNavigation = function (spotId) {
   const spot = allSpots.find(s => s.id === spotId);
   if (!spot) return;
 
@@ -472,7 +461,7 @@ window.startNavigation = function(spotId) {
 function drawRoutingLine(spot) {
   // Remove old routing
   if (routingControl) {
-    try { map.removeControl(routingControl); } catch(e) {}
+    try { map.removeControl(routingControl); } catch (e) { }
     routingControl = null;
   }
 
@@ -545,24 +534,24 @@ function renderNavSteps(instructions, summary) {
   // Direction icon mapping
   const dirIcon = (type) => {
     const map2 = {
-      Straight:    'fa-arrow-up',
+      Straight: 'fa-arrow-up',
       SlightRight: 'fa-arrow-right',
-      SlightLeft:  'fa-arrow-left',
-      Right:       'fa-turn-right',
-      Left:        'fa-turn-left',
-      SharpRight:  'fa-arrow-turn-right',
-      SharpLeft:   'fa-arrow-turn-left',
-      Roundabout:  'fa-circle-right',
+      SlightLeft: 'fa-arrow-left',
+      Right: 'fa-turn-right',
+      Left: 'fa-turn-left',
+      SharpRight: 'fa-arrow-turn-right',
+      SharpLeft: 'fa-arrow-turn-left',
+      Roundabout: 'fa-circle-right',
       DestinationReached: 'fa-flag-checkered',
       WaypointReached: 'fa-map-pin',
-      Head:        'fa-arrow-up'
+      Head: 'fa-arrow-up'
     };
     return map2[type] || 'fa-arrow-up';
   };
 
   const distStr = summary.totalDistance < 1000
     ? `${Math.round(summary.totalDistance)} ม.`
-    : `${(summary.totalDistance/1000).toFixed(1)} กม.`;
+    : `${(summary.totalDistance / 1000).toFixed(1)} กม.`;
   const timeStr = `${Math.round(summary.totalTime / 60)} นาที`;
 
   container.innerHTML = `
@@ -595,7 +584,7 @@ function closePanel() {
   document.getElementById('gpsPanel').classList.add('hidden-panel');
   currentNavTarget = null;
   if (routingControl) {
-    try { map.removeControl(routingControl); } catch(e) {}
+    try { map.removeControl(routingControl); } catch (e) { }
     routingControl = null;
   }
   fitMapToAllSpots(true);
@@ -741,7 +730,7 @@ function placeRouteDirectionArrows(latlngs) {
   }
 }
 
-window.navigate = function(lat, lng) {
+window.navigate = function (lat, lng) {
   window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 };
 
@@ -810,11 +799,15 @@ function openPopup(spot, marker) {
 
     <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:14px;font-size:14px;">
 
-      ${spot.image ? `
+      ${spot.video ? `
+      <div style="width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 4px; background-color: #f3f4f6; display: flex; justify-content: center; align-items: center;">
+        <video src="${spot.video}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+      </div>
+      ` : (spot.image ? `
       <div style="width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 4px; background-color: #f3f4f6; display: flex; justify-content: center; align-items: center;">
         <img src="${spot.image}" alt="${name}" style="width: 100%; height: 100%; object-fit: contain;">
       </div>
-      ` : ''}
+      ` : '')}
 
       <div>
         <p style="font-weight:700;margin:0 0 4px;color:inherit;">${labelHistory[lang]}</p>
@@ -856,18 +849,114 @@ function openPopup(spot, marker) {
   // Lock body scroll so only panel scrolls
   document.body.style.overflow = 'hidden';
 
+  // Fix pre-existing bug: Define closeSpotPanel so panel can close properly on mobile
+  const closeSpotPanel = () => {
+    panel.style.transform = 'translateY(100%)';
+    document.body.style.overflow = '';
+    const video = panel.querySelector('video');
+    if (video) {
+      video.pause();
+      video.src = '';
+    }
+  };
+
   // Close button
   document.getElementById('closeSpotPanel').addEventListener('click', closeSpotPanel);
 
   // Scroll map to center on marker
   map.panTo([spot.latitude, spot.longitude], { animate: true });
 }
+// ฟังก์ชันแสดงรายละเอียดสถานที่ท่องเที่ยวบนหน้าแผนที่ (ปรับปรุงเป็นวิดีโอ)
+function showSpotDetails(spot) {
+  currentDetailSpot = spot;
+  const lang = currentLang;
 
-// ใน map.js
-function onMarkerClick(e) {
-  const spot = e.target.options.spotData; // ข้อมูลที่ผูกไว้ตอนสร้างหมุด
-  openSpotPanel(spot); // ฟังก์ชันที่แสดง Panel
+  // ดึงอิลิเมนต์สำหรับ Desktop และ Mobile
+  const desktopImg = document.getElementById('spotDetailImage'); // เผื่อกรณีฝั่งดีไซน์เดิมยังเรียกใช้
+  const spotVideo = document.getElementById('spotDetailVideo');
+  const title = document.getElementById('spotDetailTitle');
+  const desc = document.getElementById('spotDetailDescription');
+  const evTimesContainer = document.getElementById('spotDetailEvTimes');
+  const nearbyCard = document.getElementById('spotNearbyCard');
+  const pastCard = document.getElementById('spotPastCard');
+
+  // 1. จัดการโหลดและเล่นวิดีโอสถานที่ท่องเที่ยว
+  if (spotVideo) {
+    if (spot.video) {
+      spotVideo.src = spot.video;
+      spotVideo.load();
+      // สั่งให้เล่นอัตโนมัติ (รองรับนโยบายเบราว์เซอร์เนื่องจากมีการใส่屬性 muted ไว้แล้ว)
+      spotVideo.play().catch(err => console.log("Autoplay video prevented: ", err));
+    } else {
+      // กรณีสถานีนั้นไม่มีไฟล์วิดีโอ ให้ใส่รูปภาพหรือวิดีโอพื้นหลังสำรองไว้
+      spotVideo.src = './pic/default-video.mp4';
+    }
+  }
+
+  // 2. อัปเดตข้อมูล Text ต่างๆ ตามภาษาที่เลือก
+  if (title) title.innerText = spot[`name_${lang}`] || spot.name_th;
+  if (desc) desc.innerText = spot[`description_${lang}`] || spot.description_th || spot.description;
+
+  // 3. ใส่ข้อมูลตารางเวลารถ EV
+  if (evTimesContainer) {
+    evTimesContainer.innerHTML = '';
+    if (spot.ev_time && spot.ev_time.length > 0) {
+      spot.ev_time.forEach(time => {
+        const span = document.createElement('span');
+        span.className = 'ev-time-badge';
+        span.innerText = time;
+        evTimesContainer.appendChild(span);
+      });
+    } else {
+      evTimesContainer.innerHTML = '<span class="text-xs text-gray-400">—</span>';
+    }
+  }
+
+  // 4. อัปเดตข้อมูลสถานที่ใกล้เคียง (Sidebar)
+  if (nearbyCard) {
+    nearbyCard.innerHTML = '';
+    if (spot.nearby_landmarks && spot.nearby_landmarks.length > 0) {
+      spot.nearby_landmarks.forEach(item => {
+        const p = document.createElement('p');
+        p.className = 'text-xs my-1 text-gray-600 dark:text-gray-300';
+        p.innerHTML = `<i class="fas fa-arrow-right text-[10px] mr-1 text-primary"></i> ${item}`;
+        nearbyCard.appendChild(p);
+      });
+    } else {
+      nearbyCard.innerHTML = '<p class="text-xs text-gray-400">ไม่มีข้อมูล</p>';
+    }
+  }
+
+  // 5. อัปเดตข้อมูลสถานที่ในอดีต (Sidebar)
+  if (pastCard) {
+    // ดึงข้อมูลประวัติศาสตร์มาแสดงผลในช่องสถานที่ในอดีตตามดีไซน์โครงสร้างของหน้าแมป
+    pastCard.innerText = spot[`history_${lang}`] || spot.history_th || spot.history || '—';
+  }
+
+  // 6. ควบคุมการเปิดเอฟเฟกต์แผงรายละเอียด (สำหรับ Mobile / Responsive Slide up)
+  const panel = document.getElementById('spotDetailPanel');
+  if (panel) {
+    panel.classList.add('active');
+    requestAnimationFrame(() => {
+      panel.style.transform = 'translateY(0)';
+    });
+    document.body.style.overflow = 'hidden'; // ล็อกการสกรอลล์หน้าจอหลักเบื้องหลัง
+  }
 }
 
-// ตอนสร้างหมุดต้องมี .on('click', onMarkerClick)
-marker.on('click', onMarkerClick);
+// เพิ่มการเคลียร์และหยุดเล่นวิดีโอเมื่อสั่งปิดหน้าต่าง Popup เพื่อไม่ให้เสียงหรือไฟล์ทำงานค้าง
+function closeSpotPanel() {
+  const panel = document.getElementById('spotDetailPanel');
+  const spotVideo = document.getElementById('spotDetailVideo');
+
+  if (spotVideo) {
+    spotVideo.pause();
+    spotVideo.src = ""; // เคลียร์ซอร์สเพื่อคืนความจำให้หน่วยระบบ
+  }
+
+  if (panel) {
+    panel.style.transform = 'translateY(100%)';
+    panel.classList.remove('active');
+  }
+  document.body.style.overflow = ''; // คืนสิทธิ์การสกรอลล์หน้าเว็บตามปกติ
+}
