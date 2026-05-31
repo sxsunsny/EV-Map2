@@ -26,12 +26,12 @@ function initMap(spots) {
   map = L.map('map', {
     zoomControl: false,
     dragging: true,
-    touchZoom: true,
-    scrollWheelZoom: true,
-    doubleClickZoom: true,
-    boxZoom: true,
+    touchZoom: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
     keyboard: true,
-    tap: false  // <--- เปลี่ยนเป็น false
+    tap: true  // <--- เปลี่ยนเป็น false
   });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
