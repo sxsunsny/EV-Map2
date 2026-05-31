@@ -68,10 +68,10 @@ function setLanguage(lang) {
   currentLang = lang;
   localStorage.setItem('appLang', lang);
   applyTranslations();
-  
+
   // Update active state on buttons
   document.querySelectorAll('.lang-btn').forEach(btn => {
-    if(btn.dataset.lang === lang) {
+    if (btn.dataset.lang === lang) {
       btn.classList.add('bg-primary', 'text-white');
       btn.classList.remove('bg-gray-200', 'text-gray-700');
     } else {
@@ -87,14 +87,12 @@ function setLanguage(lang) {
 function applyTranslations() {
   const elements = document.querySelectorAll('[data-i18n]');
   if (!translations[currentLang]) return;
-  
+
   elements.forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (translations[currentLang][key]) {
       if (el.tagName === 'INPUT' && el.type === 'text') {
         el.placeholder = translations[currentLang][key];
-      } else if (el.tagName === 'OPTION') {
-        el.textContent = translations[currentLang][key];
       } else {
         el.innerHTML = translations[currentLang][key];
       }
@@ -109,53 +107,23 @@ function getTranslation(key) {
   return key;
 }
 
-/** แปลง path รูปใน JSON ให้ชี้ไฟล์ในโฟลเดอร์ place/ ถูกต้อง */
-function resolveSpotImageUrl(imagePath) {
-  if (!imagePath || typeof imagePath !== 'string') return '';
-  let path = imagePath.trim().replace(/\\/g, '/');
-  path = path.replace(/^\/?plaace\//i, 'place/');
-  if (/^https?:\/\//i.test(path)) return path;
-  if (!path.startsWith('./') && !path.startsWith('../')) {
-    path = `./${path.replace(/^\//, '')}`;
-  }
-  try {
-    return new URL(path, window.location.href).href;
-  } catch {
-    return path;
-  }
-}
-
-function applySpotImage(imgEl, spot) {
-  if (!imgEl || !spot) return;
-  const url = resolveSpotImageUrl(spot.image);
-  imgEl.alt = spot[`name_${currentLang}`] || spot.name_th || 'สถานที่ท่องเที่ยว';
-  imgEl.classList.remove('spot-image-failed');
-  imgEl.onerror = () => {
-    imgEl.onerror = null;
-    imgEl.removeAttribute('src');
-    imgEl.classList.add('spot-image-failed');
-    console.warn('โหลดรูปไม่สำเร็จ:', spot.image, '→', url);
-  };
-  imgEl.src = url;
-}
-
 // Dark Mode Handling
 function initDarkMode() {
   const toggleBtns = document.querySelectorAll('.dark-mode-toggle');
   const isDark = localStorage.getItem('darkMode') === 'true';
-  
+
   if (isDark) {
     document.body.classList.add('dark-mode');
   }
 
   toggleBtns.forEach(btn => {
     if (isDark) btn.innerHTML = '<i class="fas fa-sun"></i>';
-    
+
     btn.addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
       const isNowDark = document.body.classList.contains('dark-mode');
       localStorage.setItem('darkMode', isNowDark);
-      
+
       toggleBtns.forEach(b => {
         b.innerHTML = isNowDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
       });
@@ -185,7 +153,7 @@ function initAnimations() {
 function initMobileNav() {
   const currentPath = window.location.pathname;
   const navLinks = document.querySelectorAll('.mobile-nav-link');
-  
+
   navLinks.forEach(link => {
     const href = link.getAttribute('href').replace('./', '');
     if (currentPath.endsWith(href) || (currentPath.endsWith('/') && href === 'index.html')) {
