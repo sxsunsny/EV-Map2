@@ -11,6 +11,7 @@ let routingControl = null;
 let currentNavTarget = null;
 let allSpots = [];
 let tourRouteLayer = null;
+let currentDetailSpot = null;
 
 /** ลำดับเส้นทางรถ EV ตามแผนที่ (1→2→3→…→16→4→5→1) */
 const EV_ROUTE_ORDER = [1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 4, 5, 1];
@@ -43,8 +44,9 @@ function initMap(spots) {
   drawEvTourRoute(spots);
   fitMapToAllSpots(false);
 
-  // Close spot detail panel when clicking map background
-  map.on('click', () => closeSpotPanel());
+  map.on('popupclose', () => fitMapToAllSpots(true));
+
+  setupSpotDetailOverlay();
 
   window.addEventListener('resize', () => {
     map.invalidateSize();
@@ -55,7 +57,10 @@ function initMap(spots) {
   startGPSTracking();
 
   // Language change
-  window.addEventListener('languageChanged', () => closeSpotPanel());
+  window.addEventListener('languageChanged', () => {
+    map.closePopup();
+    if (currentDetailSpot) openSpotDetail(currentDetailSpot);
+  });
 
   // URL param: ?spot=3
   const urlParams = new URLSearchParams(window.location.search);
@@ -65,8 +70,8 @@ function initMap(spots) {
     const spot = spots.find(s => s.id === spotId);
     if (spot) {
       const idx = spots.findIndex(s => s.id === spotId);
-      if (spot) {
-        setTimeout(() => openPopup(spot, null), 400);
+      if (idx !== -1 && markers[idx]) {
+        setTimeout(() => openSpotDetail(spot), 400);
       }
     }
   }
@@ -161,146 +166,181 @@ function addMarkers(spots) {
   spots.forEach(spot => {
     const icon = createNumberedIcon(spot.id, spot.id === 1);
     const marker = L.marker([spot.latitude, spot.longitude], { icon }).addTo(map);
-    marker.on('click', () => openPopup(spot, marker));
+    marker.on('click', () => openSpotDetail(spot));
     markers.push(marker);
   });
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Spot Detail Panel (slide-up from bottom — replaces popup)
+// Spot Detail Overlay (glassmorphism popup)
 // ──────────────────────────────────────────────────────────────────────────────
-function openPopup(spot, marker) {
-  const name = spot[`name_${currentLang}`] || spot.name_th;
-  const description = spot[`description_${currentLang}`] || spot.description_th || spot.description;
-  const history = spot[`history_${currentLang}`] || spot.history_th || spot.history;
+function setupSpotDetailOverlay() {
+  const overlay = document.getElementById('spotDetailOverlay');
+  const closeBtn = document.getElementById('spotDetailClose');
+  const navBtn = document.getElementById('spotDetailNavBtn');
 
-  // Ensure panel exists in DOM
-  let panel = document.getElementById('spotDetailPanel');
-  const isMobile = window.innerWidth < 768;
-
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.id = 'spotDetailPanel';
-    document.body.appendChild(panel);
-
-    // Dark mode support
-    const applyTheme = () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      panel.style.background = isDark ? '#1f2937' : 'white';
-      panel.style.color = isDark ? '#f9fafb' : '#111827';
-    };
-    applyTheme();
-    new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-  }
-
-  // bottom always 0 — padding-bottom pushes content above the nav bar
-  panel.style.cssText = `
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: 60;
-    max-height: 60vh;
-    overflow-y: auto;
-    background: white;
-    border-radius: 1.25rem 1.25rem 0 0;
-    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
-    transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-    padding-bottom: ${isMobile ? '64px' : '0px'};
-  `;
-
-
-  // Translation labels with fallbacks
-  const labelDetail = { th: 'รายละเอียดสถานที่', en: 'Spot Detail', cn: '地点详情' };
-  const labelHistory = { th: 'ประวัติความเป็นมา', en: 'History', cn: '历史背景' };
-  const labelNearby = { th: 'สถานที่ใกล้เคียง', en: 'Nearby Places', cn: '附近地点' };
-  const labelEvTime = { th: 'เวลารถ EV ผ่าน', en: 'EV Passing Times', cn: '电动车经过时间' };
-  const labelNavigate = { th: 'นำทางไปสถานีนี้', en: 'Navigate Here', cn: '导航至此' };
-  const lang = currentLang || 'th';
-
-  panel.innerHTML = `
-    <!-- Drag handle -->
-    <div style="display:flex;justify-content:center;padding:12px 0 4px;">
-      <div style="width:40px;height:4px;border-radius:99px;background:#d1d5db;"></div>
-    </div>
-
-    <!-- Header -->
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:4px 16px 12px;">
-      <div style="flex:1;padding-right:8px;">
-        <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#7A2882;margin:0 0 4px;">${labelDetail[lang]}</p>
-        <h2 style="font-size:20px;font-weight:800;margin:0;color:inherit;">${name}</h2>
-      </div>
-      <button id="closeSpotPanel"
-        style="width:32px;height:32px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7280;">
-        ✕
-      </button>
-    </div>
-
-    <!-- Body -->
-    <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:14px;font-size:14px;">
-
-      <!-- ส่วนของรูปภาพสถานที่ที่เพิ่มเข้าไปใหม่ -->
-      ${spot.image ? `
-      <div style="width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 4px;">
-        <img src="${spot.image}" alt="${name}" style="width: 100%; height: 100%; object-fit: cover;">
-      </div>
-      ` : ''}
-
-      <!-- History / Description -->
-      <div>
-        <p style="font-weight:700;margin:0 0 4px;color:inherit;">${labelHistory[lang]}</p>
-        <p style="color:#6b7280;line-height:1.6;margin:0;">${history || description}</p>
-      </div>
-
-      <!-- Nearby -->
-      <div>
-        <p style="font-weight:700;margin:0 0 4px;color:inherit;">
-          <i class="fas fa-map-marker-alt" style="color:#7A2882;margin-right:4px;"></i>${labelNearby[lang]}
-        </p>
-        <p style="color:#6b7280;margin:0;">${spot.nearby_landmarks ? spot.nearby_landmarks.join(', ') : '—'}</p>
-      </div>
-
-      <!-- EV Times -->
-      ${spot.ev_time && spot.ev_time.length ? `
-      <div>
-        <p style="font-weight:700;margin:0 0 8px;color:inherit;">
-          <i class="fas fa-bus" style="color:#7A2882;margin-right:4px;"></i>${labelEvTime[lang]}
-        </p>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          ${spot.ev_time.map(t => `<span style="background:#f3e8ff;color:#7A2882;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;">${t}</span>`).join('')}
-        </div>
-      </div>` : ''}
-
-      <!-- Navigate Button -->
-      <button onclick="startNavigation(${spot.id})"
-        style="width:100%; padding:12px; border-radius:12px; border:none; cursor:pointer;
-               background:linear-gradient(135deg,#7A2882,#1d6edb); color:white;
-               font-weight:700; font-size:14px; margin-top:4px;">
-        <i class="fas fa-route" style="margin-right:6px;"></i>
-        ${labelNavigate[lang]}
-      </button>
-    </div>
-  `;
-
-  // Slide up
-  requestAnimationFrame(() => {
-    panel.style.transform = 'translateY(0)';
+  closeBtn?.addEventListener('click', closeSpotDetail);
+  overlay?.addEventListener('click', (e) => {
+    if (e.target === overlay) closeSpotDetail();
   });
 
-  // Lock body scroll so only panel scrolls
-  document.body.style.overflow = 'hidden';
+  navBtn?.addEventListener('click', () => {
+    if (currentDetailSpot) {
+      closeSpotDetail();
+      startNavigation(currentDetailSpot.id);
+    }
+  });
 
-  // Close button
-  document.getElementById('closeSpotPanel').addEventListener('click', closeSpotPanel);
-
-  // Scroll map to center on marker
-  map.panTo([spot.latitude, spot.longitude], { animate: true });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && currentDetailSpot) closeSpotDetail();
+  });
 }
 
-function closeSpotPanel() {
-  const panel = document.getElementById('spotDetailPanel');
-  if (panel) panel.style.transform = 'translateY(100%)';
-  // Restore scroll
-  document.body.style.overflow = '';
+function matchLandmarkToSpot(landmarkName) {
+  if (!landmarkName) return null;
+  const key = landmarkName.replace(/\s/g, '').toLowerCase();
+
+  return allSpots.find(spot => {
+    const names = [spot.name_th, spot.name_en, spot.name_cn].filter(Boolean);
+    return names.some(name => {
+      const n = name.replace(/\s/g, '').toLowerCase();
+      return n.includes(key) || key.includes(n) ||
+        landmarkName.includes(name) || name.includes(landmarkName);
+    });
+  }) || null;
+}
+
+function pickLandmarkForSection(spot, section) {
+  const landmarks = spot.nearby_landmarks || [];
+  const distinct = landmarks.filter(lm => {
+    const matched = matchLandmarkToSpot(lm);
+    return !matched || matched.id !== spot.id;
+  });
+
+  if (section === 'nearby') {
+    return distinct[0] || landmarks[0];
+  }
+
+  const pastPick = distinct.find(lm =>
+    /เก่า|โรงภาพยนต์|อดีต|ประวัติ|rama|cinema|old/i.test(lm)
+  );
+  return pastPick || distinct[1] || distinct[distinct.length - 1] || landmarks[1] || landmarks[0];
+}
+
+function buildLocationCard(landmarkName, onClickSpotId) {
+  if (!landmarkName) {
+    return `<p class="spot-location-card-empty">—</p>`;
+  }
+
+  const matched = matchLandmarkToSpot(landmarkName);
+  const label = matched
+    ? (matched[`name_${currentLang}`] || matched.name_th)
+    : landmarkName;
+  const img = matched?.image || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=400';
+  const clickAttr = onClickSpotId != null
+    ? `onclick="openSpotDetailById(${onClickSpotId})"`
+    : (matched ? `onclick="openSpotDetailById(${matched.id})"` : '');
+
+  return `
+    <div class="spot-location-card" ${clickAttr}>
+      <div class="spot-location-card-inner">
+        <img src="${img}" alt="${label}" class="spot-location-card-img" loading="lazy">
+        <span class="spot-location-card-label">${label}</span>
+      </div>
+    </div>`;
+}
+
+function getSpotTag(spot) {
+  if (spot.id === 1) return 'DOWNTOWN';
+  return `#${spot.id}`;
+}
+
+window.openSpotDetailById = function (spotId) {
+  const spot = allSpots.find(s => s.id === spotId);
+  if (spot) openSpotDetail(spot);
+};
+
+function openSpotDetail(spot) {
+  if (!spot) return;
+
+  const overlay = document.getElementById('spotDetailOverlay');
+  if (!overlay) return;
+
+  currentDetailSpot = spot;
+  map.closePopup();
+
+  const name = spot[`name_${currentLang}`] || spot.name_th;
+  const description = spot[`description_${currentLang}`] || spot.description_th || spot.description || '';
+  const history = spot[`history_${currentLang}`] || spot.history_th || spot.history || '';
+  const callout = history || description;
+
+  const titleEl = document.getElementById('spotDetailTitle');
+  const imageEl = document.getElementById('spotDetailImage');
+  const videoEl = document.getElementById('spotDetailVideo');
+  const tagEl = document.getElementById('spotDetailTag');
+  const calloutEl = document.getElementById('spotDetailCallout');
+  const descEl = document.getElementById('spotDetailDescription');
+  const evContainer = document.getElementById('spotDetailEvTimes');
+  const nearbyCard = document.getElementById('spotNearbyCard');
+  const pastCard = document.getElementById('spotPastCard');
+
+  if (!titleEl || !imageEl || !descEl || !evContainer || !nearbyCard || !pastCard) return;
+
+  titleEl.textContent = name;
+  if (videoEl) {
+    if (spot.video) {
+      videoEl.src = spot.video;
+      videoEl.classList.remove('hidden');
+      imageEl.classList.add('hidden');
+      videoEl.play().catch(e => console.log('Autoplay prevented:', e));
+    } else {
+      imageEl.src = spot.image || '';
+      imageEl.alt = name;
+      imageEl.classList.remove('hidden');
+      videoEl.classList.add('hidden');
+      videoEl.src = '';
+    }
+  } else {
+    imageEl.src = spot.image || '';
+    imageEl.alt = name;
+    imageEl.classList.remove('hidden');
+  }
+  if (tagEl) tagEl.textContent = getSpotTag(spot);
+  descEl.textContent = description;
+
+  evContainer.innerHTML = (spot.ev_time || [])
+    .map(t => `<span class="time-badge">${t}</span>`)
+    .join('');
+
+  nearbyCard.innerHTML = buildLocationCard(pickLandmarkForSection(spot, 'nearby'));
+  pastCard.innerHTML = buildLocationCard(pickLandmarkForSection(spot, 'past'));
+
+  if (typeof applyTranslations === 'function') applyTranslations();
+
+  if (calloutEl) {
+    calloutEl.textContent = callout.length > 120 ? callout.slice(0, 120) + '…' : callout;
+  }
+
+  overlay.classList.add('active');
+  overlay.setAttribute('aria-hidden', 'false');
+}
+
+function closeSpotDetail() {
+  currentDetailSpot = null;
+  const videoEl = document.getElementById('spotDetailVideo');
+  if (videoEl) {
+    videoEl.pause();
+    videoEl.src = '';
+  }
+  const overlay = document.getElementById('spotDetailOverlay');
+  overlay?.classList.remove('active');
+  overlay?.setAttribute('aria-hidden', 'true');
+  fitMapToAllSpots(true);
+}
+
+/** @deprecated use openSpotDetail */
+function openPopup(spot, marker) {
+  openSpotDetail(spot);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -384,7 +424,7 @@ window.startNavigation = function (spotId) {
   if (!spot) return;
 
   currentNavTarget = spot;
-  map.closePopup();
+  closeSpotDetail();
 
   // Show panel
   const panel = document.getElementById('gpsPanel');
@@ -693,3 +733,230 @@ function placeRouteDirectionArrows(latlngs) {
 window.navigate = function (lat, lng) {
   window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 };
+
+function openPopup(spot, marker) {
+  const name = spot[`name_${currentLang}`] || spot.name_th;
+  const description = spot[`description_${currentLang}`] || spot.description_th || spot.description;
+  const history = spot[`history_${currentLang}`] || spot.history_th || spot.history;
+
+  // Ensure panel exists in DOM
+  let panel = document.getElementById('spotDetailPanel');
+  const isMobile = window.innerWidth < 768;
+
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'spotDetailPanel';
+    document.body.appendChild(panel);
+
+    // Dark mode support
+    const applyTheme = () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      panel.style.background = isDark ? '#1f2937' : 'white';
+      panel.style.color = isDark ? '#f9fafb' : '#111827';
+    };
+    applyTheme();
+    new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  // bottom always 0 — padding-bottom pushes content above the nav bar
+  panel.style.cssText = `
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 60;
+    max-height: 60vh;
+    overflow-y: auto;
+    background: white;
+    border-radius: 1.25rem 1.25rem 0 0;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    padding-bottom: ${isMobile ? '64px' : '0px'};
+  `;
+
+  // Translation labels with fallbacks
+  const labelDetail = { th: 'รายละเอียดสถานที่', en: 'Spot Detail', cn: '地点详情' };
+  const labelHistory = { th: 'ประวัติความเป็นมา', en: 'History', cn: '历史背景' };
+  const labelNearby = { th: 'สถานที่ใกล้เคียง', en: 'Nearby Places', cn: '附近地点' };
+  const labelEvTime = { th: 'เวลารถ EV ผ่าน', en: 'EV Passing Times', cn: '电动车经过时间' };
+  const labelNavigate = { th: 'นำทางไปสถานีนี้', en: 'Navigate Here', cn: '导航至此' };
+  const lang = currentLang || 'th';
+
+  panel.innerHTML = `
+    <div style="display:flex;justify-content:center;padding:12px 0 4px;">
+      <div style="width:40px;height:4px;border-radius:99px;background:#d1d5db;"></div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:4px 16px 12px;">
+      <div style="flex:1;padding-right:8px;">
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#7A2882;margin:0 0 4px;">${labelDetail[lang]}</p>
+        <h2 style="font-size:20px;font-weight:800;margin:0;color:inherit;">${name}</h2>
+      </div>
+      <button id="closeSpotPanel"
+        style="width:32px;height:32px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6b7280;">
+        ✕
+      </button>
+    </div>
+
+    <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:14px;font-size:14px;">
+
+      ${spot.video ? `
+      <div style="width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 4px; background-color: #f3f4f6; display: flex; justify-content: center; align-items: center;">
+        <video src="${spot.video}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+      </div>
+      ` : (spot.image ? `
+      <div style="width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 4px; background-color: #f3f4f6; display: flex; justify-content: center; align-items: center;">
+        <img src="${spot.image}" alt="${name}" style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      ` : '')}
+
+      <div>
+        <p style="font-weight:700;margin:0 0 4px;color:inherit;">${labelHistory[lang]}</p>
+        <p style="color:#6b7280;line-height:1.6;margin:0;">${history || description}</p>
+      </div>
+
+      <div>
+        <p style="font-weight:700;margin:0 0 4px;color:inherit;">
+          <i class="fas fa-map-marker-alt" style="color:#7A2882;margin-right:4px;"></i>${labelNearby[lang]}
+        </p>
+        <p style="color:#6b7280;margin:0;">${spot.nearby_landmarks ? spot.nearby_landmarks.join(', ') : '—'}</p>
+      </div>
+
+      ${spot.ev_time && spot.ev_time.length ? `
+      <div>
+        <p style="font-weight:700;margin:0 0 8px;color:inherit;">
+          <i class="fas fa-bus" style="color:#7A2882;margin-right:4px;"></i>${labelEvTime[lang]}
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${spot.ev_time.map(t => `<span style="background:#f3e8ff;color:#7A2882;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;">${t}</span>`).join('')}
+        </div>
+      </div>` : ''}
+
+      <button onclick="startNavigation(${spot.id})"
+        style="width:100%; padding:12px; border-radius:12px; border:none; cursor:pointer;
+               background:linear-gradient(135deg,#7A2882,#1d6edb); color:white;
+               font-weight:700; font-size:14px; margin-top:4px;">
+        <i class="fas fa-route" style="margin-right:6px;"></i>
+        ${labelNavigate[lang]}
+      </button>
+    </div>
+  `;
+
+  // Slide up
+  requestAnimationFrame(() => {
+    panel.style.transform = 'translateY(0)';
+  });
+
+  // Lock body scroll so only panel scrolls
+  document.body.style.overflow = 'hidden';
+
+  // Fix pre-existing bug: Define closeSpotPanel so panel can close properly on mobile
+  const closeSpotPanel = () => {
+    panel.style.transform = 'translateY(100%)';
+    document.body.style.overflow = '';
+    const video = panel.querySelector('video');
+    if (video) {
+      video.pause();
+      video.src = '';
+    }
+  };
+
+  // Close button
+  document.getElementById('closeSpotPanel').addEventListener('click', closeSpotPanel);
+
+  // Scroll map to center on marker
+  map.panTo([spot.latitude, spot.longitude], { animate: true });
+}
+// ฟังก์ชันแสดงรายละเอียดสถานที่ท่องเที่ยวบนหน้าแผนที่ (ปรับปรุงเป็นวิดีโอ)
+function showSpotDetails(spot) {
+  currentDetailSpot = spot;
+  const lang = currentLang;
+
+  // ดึงอิลิเมนต์สำหรับ Desktop และ Mobile
+  const desktopImg = document.getElementById('spotDetailImage'); // เผื่อกรณีฝั่งดีไซน์เดิมยังเรียกใช้
+  const spotVideo = document.getElementById('spotDetailVideo');
+  const title = document.getElementById('spotDetailTitle');
+  const desc = document.getElementById('spotDetailDescription');
+  const evTimesContainer = document.getElementById('spotDetailEvTimes');
+  const nearbyCard = document.getElementById('spotNearbyCard');
+  const pastCard = document.getElementById('spotPastCard');
+
+  // 1. จัดการโหลดและเล่นวิดีโอสถานที่ท่องเที่ยว
+  if (spotVideo) {
+    if (spot.video) {
+      spotVideo.src = spot.video;
+      spotVideo.load();
+      // สั่งให้เล่นอัตโนมัติ (รองรับนโยบายเบราว์เซอร์เนื่องจากมีการใส่屬性 muted ไว้แล้ว)
+      spotVideo.play().catch(err => console.log("Autoplay video prevented: ", err));
+    } else {
+      // กรณีสถานีนั้นไม่มีไฟล์วิดีโอ ให้ใส่รูปภาพหรือวิดีโอพื้นหลังสำรองไว้
+      spotVideo.src = './pic/default-video.mp4';
+    }
+  }
+
+  // 2. อัปเดตข้อมูล Text ต่างๆ ตามภาษาที่เลือก
+  if (title) title.innerText = spot[`name_${lang}`] || spot.name_th;
+  if (desc) desc.innerText = spot[`description_${lang}`] || spot.description_th || spot.description;
+
+  // 3. ใส่ข้อมูลตารางเวลารถ EV
+  if (evTimesContainer) {
+    evTimesContainer.innerHTML = '';
+    if (spot.ev_time && spot.ev_time.length > 0) {
+      spot.ev_time.forEach(time => {
+        const span = document.createElement('span');
+        span.className = 'ev-time-badge';
+        span.innerText = time;
+        evTimesContainer.appendChild(span);
+      });
+    } else {
+      evTimesContainer.innerHTML = '<span class="text-xs text-gray-400">—</span>';
+    }
+  }
+
+  // 4. อัปเดตข้อมูลสถานที่ใกล้เคียง (Sidebar)
+  if (nearbyCard) {
+    nearbyCard.innerHTML = '';
+    if (spot.nearby_landmarks && spot.nearby_landmarks.length > 0) {
+      spot.nearby_landmarks.forEach(item => {
+        const p = document.createElement('p');
+        p.className = 'text-xs my-1 text-gray-600 dark:text-gray-300';
+        p.innerHTML = `<i class="fas fa-arrow-right text-[10px] mr-1 text-primary"></i> ${item}`;
+        nearbyCard.appendChild(p);
+      });
+    } else {
+      nearbyCard.innerHTML = '<p class="text-xs text-gray-400">ไม่มีข้อมูล</p>';
+    }
+  }
+
+  // 5. อัปเดตข้อมูลสถานที่ในอดีต (Sidebar)
+  if (pastCard) {
+    // ดึงข้อมูลประวัติศาสตร์มาแสดงผลในช่องสถานที่ในอดีตตามดีไซน์โครงสร้างของหน้าแมป
+    pastCard.innerText = spot[`history_${lang}`] || spot.history_th || spot.history || '—';
+  }
+
+  // 6. ควบคุมการเปิดเอฟเฟกต์แผงรายละเอียด (สำหรับ Mobile / Responsive Slide up)
+  const panel = document.getElementById('spotDetailPanel');
+  if (panel) {
+    panel.classList.add('active');
+    requestAnimationFrame(() => {
+      panel.style.transform = 'translateY(0)';
+    });
+    document.body.style.overflow = 'hidden'; // ล็อกการสกรอลล์หน้าจอหลักเบื้องหลัง
+  }
+}
+
+// เพิ่มการเคลียร์และหยุดเล่นวิดีโอเมื่อสั่งปิดหน้าต่าง Popup เพื่อไม่ให้เสียงหรือไฟล์ทำงานค้าง
+function closeSpotPanel() {
+  const panel = document.getElementById('spotDetailPanel');
+  const spotVideo = document.getElementById('spotDetailVideo');
+
+  if (spotVideo) {
+    spotVideo.pause();
+    spotVideo.src = ""; // เคลียร์ซอร์สเพื่อคืนความจำให้หน่วยระบบ
+  }
+
+  if (panel) {
+    panel.style.transform = 'translateY(100%)';
+    panel.classList.remove('active');
+  }
+  document.body.style.overflow = ''; // คืนสิทธิ์การสกรอลล์หน้าเว็บตามปกติ
+}
