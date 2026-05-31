@@ -25,13 +25,13 @@ function initMap(spots) {
 
   map = L.map('map', {
     zoomControl: false,
-    dragging: false,
-    touchZoom: false,
-    scrollWheelZoom: false,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-    tap: false
+    dragging: true,
+    touchZoom: true,
+    scrollWheelZoom: true,
+    doubleClickZoom: true,
+    boxZoom: true,
+    keyboard: true,
+    tap: false  // <--- เปลี่ยนเป็น false
   });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
