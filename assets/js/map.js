@@ -862,3 +862,12 @@ function openPopup(spot, marker) {
   // Scroll map to center on marker
   map.panTo([spot.latitude, spot.longitude], { animate: true });
 }
+
+// ใน map.js
+function onMarkerClick(e) {
+  const spot = e.target.options.spotData; // ข้อมูลที่ผูกไว้ตอนสร้างหมุด
+  openSpotPanel(spot); // ฟังก์ชันที่แสดง Panel
+}
+
+// ตอนสร้างหมุดต้องมี .on('click', onMarkerClick)
+marker.on('click', onMarkerClick);
