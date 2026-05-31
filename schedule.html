@@ -13,9 +13,6 @@
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Mitr', 'sans-serif'],
-          },
           colors: {
             primary: '#7A2882',
             'primary-light': '#9d42a6',
@@ -40,18 +37,18 @@
       <div class="flex justify-between h-20 items-center">
         <!-- Logos -->
         <div class="flex-shrink-0 flex items-center space-x-3">
-          <img src="pic/culture.jpg" alt="Culture" class="nav-brand-logo drop-shadow-md bg-white rounded-full p-1"
-            title="วัฒนธรรมจังหวัดเชียงราย">
-          <img src="pic/swk.PNG" alt="School" class="nav-brand-logo drop-shadow-md bg-white rounded-full p-1"
+          <img src="pic/culture.jpg" alt="Culture"
+            class="h-10 w-10 object-contain drop-shadow-md bg-white rounded-full p-1" title="วัฒนธรรมจังหวัดเชียงราย">
+          <img src="pic/swk.PNG" alt="School" class="h-10 w-10 object-contain drop-shadow-md bg-white rounded-full p-1"
             title="โรงเรียนสามัคคีวิทยาคม">
-          <img src="pic/sc.PNG" alt="Council" class="nav-brand-logo drop-shadow-md bg-white rounded-full p-1"
+          <img src="pic/sc.PNG" alt="Council" class="h-10 w-10 object-contain drop-shadow-md bg-white rounded-full p-1"
             title="คณะกรรมการสภานักเรียน">
         </div>
 
         <!-- Desktop Menu -->
         <div class="hidden md:flex items-center space-x-8">
           <a href="./index.html" class="nav-link text-gray-800 dark:text-gray-200 font-semibold"
-            data-i18n="nav_home">หน้าหลัก</a>
+            data-i18n="nav_home">หน้าแรก</a>
           <a href="./map.html" class="nav-link text-gray-800 dark:text-gray-200 font-semibold"
             data-i18n="nav_map">แผนที่</a>
           <a href="./schedule.html" class="nav-link active text-gray-800 dark:text-gray-200 font-semibold"
@@ -87,7 +84,7 @@
       <a href="./index.html"
         class="mobile-nav-link flex flex-col items-center justify-center w-full h-full text-gray-500 transition relative">
         <i class="fas fa-home text-xl mb-1"></i>
-        <span class="text-[10px] font-medium" data-i18n="nav_home">หน้าหลัก</span>
+        <span class="text-[10px] font-medium" data-i18n="nav_home">หน้าแรก</span>
       </a>
       <a href="./map.html"
         class="mobile-nav-link flex flex-col items-center justify-center w-full h-full text-gray-500 transition relative">
@@ -130,9 +127,9 @@
         <i class="fas fa-filter absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
         <select id="timeFilter"
           class="w-full pl-12 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50 transition appearance-none dark:text-white">
-          <option value="all" data-i18n="filter_all">ทั้งหมด</option>
-          <option value="morning" data-i18n="filter_morning">รอบเช้า (ก่อน 12:00)</option>
-          <option value="afternoon" data-i18n="filter_afternoon">รอบบ่าย (หลัง 12:00)</option>
+          <option value="all" data-i18n="filter_time">ทั้งหมด</option>
+          <option value="morning">รอบเช้า (ก่อน 12:00)</option>
+          <option value="afternoon">รอบบ่าย (หลัง 12:00)</option>
         </select>
         <i
           class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
@@ -176,13 +173,6 @@
     </div>
 
   </main>
-
-  <!-- Footer -->
-  <footer class="glass mt-0 py-6 px-4 text-center border-t border-gray-200/20 relative z-10 w-full">
-    <div class="max-w-7xl mx-auto text-xs text-gray-500 dark:text-gray-400 font-medium">
-      <p>© 2026 SWK Student Council</p>
-    </div>
-  </footer>
 
   <script src="./assets/js/app.js"></script>
   <script src="./assets/js/schedule.js"></script>
