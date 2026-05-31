@@ -8,9 +8,6 @@ let refreshTimer = null;
 let filteredSchedules = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  if (typeof loadTranslations === 'function') {
-    await loadTranslations();
-  }
   allSchedules = await loadSchedules();
   refreshScheduleView();
   initFilters(allSchedules);
@@ -41,41 +38,12 @@ function getBangkokNow() {
   };
 }
 
-function getDateLocale() {
-  const locales = { th: 'th-TH', en: 'en-GB', cn: 'zh-CN' };
-  return locales[currentLang] || 'th-TH';
-}
-
 function getBangkokTimeLabel() {
-  return new Intl.DateTimeFormat(getDateLocale(), {
+  return new Intl.DateTimeFormat('th-TH', {
     timeZone: BANGKOK_TZ,
     dateStyle: 'medium',
     timeStyle: 'short'
   }).format(new Date());
-}
-
-function localizeScheduleItem(item) {
-  const time = item.depart_time;
-  return {
-    ...item,
-    route: getTranslation('schedule_route_template').replace('{time}', time),
-    depart_from: getTranslation('schedule_depart_from'),
-    arrive_at: getTranslation('schedule_arrive_at')
-  };
-}
-
-function localizeOrderedSchedules(ordered) {
-  return ordered.map((row) => ({
-    ...row,
-    ...localizeScheduleItem(row)
-  }));
-}
-
-function scheduleSearchBlob(item) {
-  const loc = localizeScheduleItem(item);
-  return [loc.route, loc.depart_from, loc.arrive_at, item.route, item.depart_from, item.arrive_at]
-    .join(' ')
-    .toLowerCase();
 }
 
 function parseTimeToMinutes(timeStr) {
@@ -188,10 +156,13 @@ function renderScheduleStatus(ordered) {
           <i class="far fa-clock mr-1"></i>${getTranslation('schedule_thai_time')}: <strong>${getBangkokTimeLabel()}</strong>
         </p>
       </div>
-      <div>
+      <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
         <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/15 text-primary dark:text-primary-light text-sm font-bold border border-primary/30">
           <i class="fas fa-star"></i>
           ${getTranslation('schedule_next_round')}: ${nextTime}
+        </span>
+        <span class="text-xs text-gray-500 dark:text-gray-400">
+          <i class="fas fa-rotate mr-1"></i>${getTranslation('schedule_reset_at')} ${getNextResetLabel()}
         </span>
       </div>
     </div>
@@ -201,8 +172,7 @@ function renderScheduleStatus(ordered) {
 
 function refreshScheduleView() {
   const source = filteredSchedules !== null ? filteredSchedules : allSchedules;
-  const ordered = localizeOrderedSchedules(orderSchedulesByCurrentTime(source));
-  applyTranslations();
+  const ordered = orderSchedulesByCurrentTime(source);
   renderScheduleStatus(ordered);
   renderSchedules(ordered);
 }
@@ -274,6 +244,7 @@ function renderSchedules(data) {
     mobileContainer.appendChild(card);
   });
 
+  applyTranslations();
   if (typeof initAnimations === 'function') initAnimations();
 }
 
@@ -286,7 +257,10 @@ function initFilters(schedules) {
     const time = timeFilter.value;
 
     filteredSchedules = schedules.filter((item) => {
-      const matchRoute = scheduleSearchBlob(item).includes(term);
+      const matchRoute =
+        item.route.toLowerCase().includes(term) ||
+        item.depart_from.toLowerCase().includes(term) ||
+        item.arrive_at.toLowerCase().includes(term);
 
       let matchTime = true;
       if (time === 'morning') {
