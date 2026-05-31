@@ -23,8 +23,7 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
   <link rel="stylesheet" href="./assets/css/style.css">
 
@@ -318,7 +317,6 @@
 
 <body class="bg-gray-50 dark:bg-gray-900 overflow-hidden">
 
-  <!-- Desktop Navigation -->
   <nav class="glass fixed top-0 w-full z-50 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-20 items-center">
@@ -357,7 +355,6 @@
     </div>
   </nav>
 
-  <!-- Mobile Bottom Navigation -->
   <nav class="md:hidden fixed bottom-0 w-full glass rounded-t-3xl z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
     <div class="flex justify-around items-center h-16">
       <a href="./index.html"
@@ -381,7 +378,6 @@
   <main class="map-page-main">
     <div id="map"></div>
 
-    <!-- GPS Panel -->
     <div id="gpsPanel" class="hidden-panel">
       <div class="flex items-center justify-between px-4 py-3"
         style="background: linear-gradient(135deg, #7A2882 0%, #1d6edb 100%);">
@@ -423,14 +419,12 @@
       </div>
     </div>
 
-    <!-- Legend Button -->
     <button id="legendToggleBtn"
       style="position:fixed;bottom:88px;left:14px;z-index:40;width:48px;height:48px;border-radius:50%;background:white;border:3px solid #7A2882;color:#7A2882;font-size:18px;box-shadow:0 4px 16px rgba(0,0,0,0.18);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s,color 0.2s;"
       title="รายชื่อสถานี">
       <i class="fas fa-list-ol"></i>
     </button>
 
-    <!-- Legend Panel -->
     <div id="legendPanel"
       style="position:fixed;bottom:148px;left:14px;z-index:50;width:260px;max-height:55vh;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.2);overflow:hidden;display:flex;flex-direction:column;transform:translateY(10px) scale(0.97);opacity:0;pointer-events:none;transition:opacity 0.22s ease,transform 0.22s ease;">
       <div style="background:linear-gradient(135deg,#7A2882,#9d42a6);padding:12px 16px;flex-shrink:0;">
@@ -441,7 +435,6 @@
       <div id="legendList" style="overflow-y:auto;flex:1;padding:6px 0;"></div>
     </div>
 
-    <!-- Floating Buttons (FAB) -->
     <div class="floating-actions" id="floatingActions">
       <div class="fab-child">
         <span class="fab-label">เริ่มเส้นทาง EV</span>
@@ -465,12 +458,7 @@
         <i class="fas fa-plus"></i>
       </button>
     </div>
-    <!-- Footer -->
-    <footer class="glass mt-0 py-6 px-4 text-center border-t border-gray-200/20 relative z-10 w-full">
-      <div class="max-w-7xl mx-auto text-xs text-gray-500 dark:text-gray-400 font-medium">
-        <p>&copy; 2026 SWK Student Council</p>
-      </div>
-    </footer>
+
     <script>
       // FAB toggle
       document.getElementById('fabToggleBtn')?.addEventListener('click', () => {
@@ -556,8 +544,77 @@
     </script>
   </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <div id="spotDetailOverlay" class="spot-detail-overlay" aria-hidden="true">
+
+    <div class="spot-detail-panel" role="dialog" aria-modal="true" style="max-width: 1000px; width: 95%;">
+      <button type="button" class="spot-detail-close" id="spotDetailClose" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="spot-detail-scroll">
+        <div class="spot-detail-main">
+          <header class="spot-detail-header">
+            <div class="spot-detail-title-banner">
+              <h2 id="spotDetailTitle">—</h2>
+            </div>
+          </header>
+
+          <div class="spot-detail-body">
+            <div class="spot-detail-hero">
+              <div class="spot-detail-platform">
+
+                <div class="spot-detail-platform-base" style="position: relative;">
+
+                  <img src="./pic/mascot-guide.png" alt=""
+                    style="position: absolute; top: -10px; left: -10px; width: 90px; z-index: 20; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));"
+                    draggable="false">
+
+                  <img id="spotDetailImage" src="" alt="" class="spot-detail-spot-img hidden">
+                  <video id="spotDetailVideo" class="spot-detail-spot-img hidden"
+                    style="width: 100%; border-radius: inherit; object-fit: cover;" autoplay loop muted
+                    playsinline></video>
+
+                  <span id="spotDetailTag" class="spot-detail-tag">DOWNTOWN</span>
+                </div>
+              </div>
+
+              <div class="spot-detail-callout">
+                <p id="spotDetailCallout" class="spot-detail-callout-text"></p>
+              </div>
+            </div>
+
+            <div class="spot-detail-desc">
+              <p id="spotDetailDescription"></p>
+            </div>
+
+            <div class="spot-detail-ev-row">
+              <span class="spot-detail-ev-label" data-i18n="ev_passing_time">เวลารถ EV ผ่าน</span>
+              <div id="spotDetailEvTimes" class="spot-detail-ev-times"></div>
+            </div>
+
+            <button type="button" id="spotDetailNavBtn" class="spot-detail-nav-btn">
+              <i class="fas fa-route"></i>
+              <span data-i18n="navigate">นำทาง</span>
+            </button>
+          </div>
+        </div>
+
+        <aside class="spot-detail-sidebar">
+          <div class="spot-sidebar-section">
+            <div class="spot-sidebar-btn" data-i18n="nearby">สถานที่ใกล้เคียง</div>
+            <div id="spotNearbyCard" class="spot-location-card"></div>
+          </div>
+
+          <div class="spot-sidebar-section">
+            <div class="spot-sidebar-btn" data-i18n="past_places">สถานที่ในอดีต</div>
+            <div id="spotPastCard" class="spot-location-card"></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
   <script src="./assets/js/app.js"></script>
   <script src="./assets/js/map.js"></script>
